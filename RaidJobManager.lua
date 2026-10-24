@@ -1,0 +1,53 @@
+-- Hooks:PreHook(RaidJobManager, "do_external_end_mission", "ExtraAchievs_RaidJobManager_do_external_end_mission",
+--     function(self, restart_camp)
+--         if not (managers.lootdrop and managers.worldcollection and managers.greed and managers.consumable_missions) then
+--             return
+--         end
+--         self._extra_achievs_loot_data = {
+--             dogtags = 0,
+--             greed_items = 0,
+--             greed_cache = 0,
+--             intel = 0
+--         }
+--         log("managers.lootdrop._active_loot_units:")
+--         Utils.PrintTable(managers.lootdrop._active_loot_units or {}, 3)
+--         for _, dogtag in pairs(managers.lootdrop._active_loot_units or {}) do
+--             if dogtag then
+--                 self._extra_achievs_loot_data.dogtags = self._extra_achievs_loot_data.dogtags + 1
+--             end
+--         end
+--         if not managers.worldcollection._world_spawns or managers.worldcollection:count_world_spawns() == 0 then
+--             self:collect_extra_achievs_world_loot_data()
+--         else
+--             for world_id, world in pairs(managers.worldcollection._world_spawns) do
+--                 if world.active then
+--                     self:collect_extra_achievs_world_loot_data(world_id)
+--                 end
+--             end
+--         end
+--     end
+-- )
+
+-- function RaidJobManager:collect_extra_achievs_world_loot_data(world_id)
+--     for _, greed_item in pairs(managers.greed._registered_greed_items[world_id] or {}) do
+--         if alive(greed_item.unit) and not greed_item.deleted then
+--             self._extra_achievs_loot_data.greed_items = self._extra_achievs_loot_data.greed_items + 1
+--         end
+--     end
+--     for _, greed_cache in pairs(managers.greed._registered_greed_cache_items[world_id] or {}) do
+--         if alive(greed_cache.unit) and not greed_cache.deleted then
+--             self._extra_achievs_loot_data.greed_cache = 1
+--             break
+--         end
+--     end
+--     for _, intel in pairs(managers.consumable_missions._registered_intel_documents[world_id or 0] or {}) do
+--         if alive(intel.unit) and not intel.deleted then
+--             self._extra_achievs_loot_data.intel = 1
+--             break
+--         end
+--     end
+-- end
+
+-- function RaidJobManager:get_extra_achievs_loot_data()
+--     return self._extra_achievs_loot_data
+-- end

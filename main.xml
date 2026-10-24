@@ -1,0 +1,43 @@
+<mod auto_image_color="true"
+     color="Color(0.24,0.24,0.24)"
+     min_lib_ver="5.0.2.2">
+    <AssetUpdates id="50208"
+                  provider="modworkshop"
+                  version="0.1" />
+    <Localization directory="loc">
+        <loc file="english.json"
+             language="english" />
+    </Localization>
+    <Achievements id="extra_achievements">
+        <achievement id="no_blood_on_the_risers"
+                     reward_type="gold"
+                     reward_amount="50"
+                     rank="3" />
+        <achievement id="let_them_watch"
+                     reward_type="gold"
+                     reward_amount="50"
+                     rank="3" />
+        <achievement id="blammosweep"
+                     reward_type="gold"
+                     reward_amount="50"
+                     rank="3" />
+        <achievement id="cant_take_it_anymore"
+                     reward_type="gold"
+                     reward_amount="10"
+                     rank="1" />
+    </Achievements>
+    <Hooks>
+        <hook source_file="lib/managers/greedmanager"
+              file="ExtraAchievs.lua" />
+        <hook source_file="lib/managers/consumablemissionmanager"
+              file="ExtraAchievs.lua" />
+        <hook source_file="lib/managers/lootmanager"
+              file="ExtraAchievs.lua" />
+        <hook source_file="lib/managers/raidjobmanager"
+              file="ExtraAchievs.lua" />
+        <hook source_file="lib/units/beings/player/playerdamage"
+              file="PlayerDamage.lua" />
+        <hook source_file="lib/states/eventcompletestate"
+              file="EventCompleteState.lua" />
+    </Hooks>
+</mod>
