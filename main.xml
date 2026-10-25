@@ -1,9 +1,6 @@
 <mod auto_image_color="true"
      color="Color(0.24,0.24,0.24)"
      min_lib_ver="5.0.2.2">
-    <AssetUpdates id="50208"
-                  provider="modworkshop"
-                  version="0.1" />
     <Localization directory="loc">
         <loc file="english.json"
              language="english" />

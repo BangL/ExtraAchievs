@@ -2,7 +2,13 @@
 <mod name="Extra Achievements"
      description="Adds extra achievements to the game."
      author="BangL, shinrax2"
+     version="0.1"
      color="Color(0.24,0.24,0.24)">
+    <updates>
+        <update identifier="extraachievs">
+            <host meta="https://raw.githubusercontent.com/BangL/raid-mods-meta/main/extraachievs.json"/>
+        </update>
+    </updates>
     <dependencies>
         <dependency name="BeardLib"
                     download_url="https://api.modworkshop.net/files/49760/download" />
