@@ -1,15 +1,57 @@
 {
-  "extra_achievements_name": "Extra Achievements",
+  "extra_achievements_name": "Extra Achievements - General",
+
   "no_blood_on_the_risers_name": "No blood on the risers",
   "no_blood_on_the_risers_desc": "finish COUNTDOWN on VERY HARD without any player ever going to bleed out",
   "no_blood_on_the_risers_objective": "finish COUNTDOWN on VERY HARD without any player ever going to bleed out",
+
   "let_them_watch_name": "Let them watch",
   "let_them_watch_desc": "finish TRAIN WRECK on VERY HARD without killing any snipers or spotters",
   "let_them_watch_objective": "finish TRAIN WRECK on VERY HARD without killing any snipers or spotters",
+
+  "blammosweep_name": "BLAMMOSWEEP",
+  "blammosweep_desc": "finish GOLD RUSH on VERY HARD with all gold, greed items and dogtags secured",
+  "blammosweep_objective": "finish GOLD RUSH on VERY HARD with all gold, greed items and dogtags secured",
+
   "cant_take_it_anymore_name": "Cant take it anymore",
   "cant_take_it_anymore_desc": "jump from the very top of the bridge in TRAIN WRECK and die from the fall",
   "cant_take_it_anymore_objective": "jump from the very top of the bridge in TRAIN WRECK and die from the fall",
-  "blammosweep_name": "BLAMMOSWEEP",
-  "blammosweep_desc": "finish GOLD RUSH on VERY HARD with all gold, greed items and dogtags secured",
-  "blammosweep_objective": "finish GOLD RUSH on VERY HARD with all gold, greed items and dogtags secured"
+
+  "extra_achievements_pickpocket_name": "Extra Achievements - Pickpocket mission equipment",
+
+  "pacifist_rogues_gallery_difficulty_1_name": "Peace and Greed - EASY",
+  "pacifist_rogues_gallery_difficulty_1_desc": "pacifist stealth ROGUES GALLERY on EASY",
+  "pacifist_rogues_gallery_difficulty_1_objective": "finish ROGUES GALLERY in stealth, without killing anyone, but securing 2 gold, on EASY",
+
+  "pacifist_rogues_gallery_difficulty_2_name": "Peace and Greed - NORMAL",
+  "pacifist_rogues_gallery_difficulty_2_desc": "pacifist stealth ROGUES GALLERY on NORMAL",
+  "pacifist_rogues_gallery_difficulty_2_objective": "finish ROGUES GALLERY in stealth, without killing anyone, but securing 2 gold, on NORMAL",
+
+  "pacifist_rogues_gallery_difficulty_3_name": "Peace and Greed - HARD",
+  "pacifist_rogues_gallery_difficulty_3_desc": "pacifist stealth ROGUES GALLERY on HARD",
+  "pacifist_rogues_gallery_difficulty_3_objective": "finish ROGUES GALLERY in stealth, without killing anyone, but securing 2 gold, on HARD",
+
+  "pacifist_rogues_gallery_difficulty_4_name": "Peace and Greed - VERY HARD",
+  "pacifist_rogues_gallery_difficulty_4_desc": "pacifist stealth ROGUES GALLERY on VERY HARD",
+  "pacifist_rogues_gallery_difficulty_4_objective": "finish ROGUES GALLERY in stealth, without killing anyone, but securing 2 gold, on VERY HARD",
+
+  "pacifist_enigmatic_difficulty_1_name": "Pacifistmatic - EASY",
+  "pacifist_enigmatic_difficulty_1_desc": "pacifist stealth ENIGMATIC on EASY",
+  "pacifist_enigmatic_difficulty_1_objective": "finish ENIGMATIC in stealth, without killing anyone, on EASY",
+
+  "pacifist_enigmatic_difficulty_2_name": "Pacifistmatic - NORMAL",
+  "pacifist_enigmatic_difficulty_2_desc": "pacifist stealth ENIGMATIC on NORMAL",
+  "pacifist_enigmatic_difficulty_2_objective": "finish ENIGMATIC in stealth, without killing anyone, on NORMAL",
+
+  "pacifist_enigmatic_difficulty_3_name": "Pacifistmatic - HARD",
+  "pacifist_enigmatic_difficulty_3_desc": "pacifist stealth ENIGMATIC on HARD",
+  "pacifist_enigmatic_difficulty_3_objective": "finish ENIGMATIC in stealth, without killing anyone, on HARD",
+
+  "pacifist_enigmatic_difficulty_4_name": "Pacifistmatic - VERY HARD",
+  "pacifist_enigmatic_difficulty_4_desc": "pacifist stealth ENIGMATIC on VERY HARD",
+  "pacifist_enigmatic_difficulty_4_objective": "finish ENIGMATIC in stealth, without killing anyone, on VERY HARD",
+
+  "pacifist_burning_man_name": "The ultimate stealth challenge",
+  "pacifist_burning_man_desc": "Achieve the borderline impossible: pacifist stealth BURNING MAN",
+  "pacifist_burning_man_objective": "finish BURNING MAN without being detected by anyone, and without killing anyone"
 }

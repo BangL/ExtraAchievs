@@ -8,7 +8,7 @@
     <Achievements id="extra_achievements">
         <achievement id="no_blood_on_the_risers"
                      reward_type="gold"
-                     reward_amount="50"
+                     reward_amount="75"
                      rank="3" />
         <achievement id="let_them_watch"
                      reward_type="gold"
@@ -16,8 +16,8 @@
                      rank="3" />
         <achievement id="blammosweep"
                      reward_type="gold"
-                     reward_amount="50"
-                     rank="3" />
+                     reward_amount="100"
+                     rank="4" />
         <achievement id="cant_take_it_anymore"
                      reward_type="gold"
                      reward_amount="10"
@@ -34,6 +34,8 @@
               file="ExtraAchievs.lua" />
         <hook source_file="lib/units/beings/player/playerdamage"
               file="PlayerDamage.lua" />
+        <hook source_file="lib/tweak_data/achievementtweakdata"
+              file="Pickpocket.lua" />
         <hook source_file="lib/states/eventcompletestate"
               file="EventCompleteState.lua" />
     </Hooks>

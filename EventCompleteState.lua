@@ -18,6 +18,8 @@ Hooks:PostHook(EventCompleteState, "_check_complete_achievements",
 
         local job_id = self._current_job_data.job_id
         local is_operation = self._current_job_data.job_type == OperationsTweakData.JOB_TYPE_OPERATION
+        ExtraAchievs:CheckPickpocket(self)
+
         local is_very_hard = self._difficulty == "difficulty_4"
 
         if is_operation or not is_very_hard then

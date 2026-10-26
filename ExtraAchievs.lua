@@ -15,13 +15,13 @@ if not ExtraAchievs._run then
     ExtraAchievs:ResetRun()
 end
 
-function ExtraAchievs:Unlock(id)
+function ExtraAchievs:Unlock(id, package_id)
     if not CustomAchievementPackage then
         log("[Extra Achievements] [ERROR] CustomAchievementPackage was nil")
         return
     end
 
-    local package = CustomAchievementPackage:new("extra_achievements")
+    local package = CustomAchievementPackage:new(package_id or "extra_achievements")
     local achievement = package and package:Achievement(id)
     if achievement and not achievement:IsUnlocked() then
         achievement:Unlock()
@@ -128,7 +128,7 @@ if RaidJobManager and not ExtraAchievs._hooked_job then
 
     Hooks:PostHook(RaidJobManager, "external_start_mission_clbk", "ExtraAchievs_RaidJobManager_post_external_start_mission_clbk",
         function()
-            ExtraAchievs._run.gold = 0
+            ExtraAchievs:ResetRun()
         end
     )
 end
