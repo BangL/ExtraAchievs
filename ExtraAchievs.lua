@@ -6,6 +6,7 @@ ExtraAchievs.GOLD_RUSH_GOLD = 40
 function ExtraAchievs:ResetRun()
     self._run = {
         gold = 0,        -- secured gold bars
+        kills = 0,       -- enemy deaths by anyone
         cache_units = {}, -- world_id -> greed cache units that were spawned
         intel_units = {}, -- world_id -> chosen intel document unit
     }

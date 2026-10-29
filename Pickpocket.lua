@@ -18,6 +18,12 @@ for i, v in ipairs(ENIGMATIC) do
 end
 table.insert(ACHIEVEMENTS, { id = "pacifist_burning_man", rank = 4, reward_type = "gold", reward_amount = 150 })
 
+local FREE_PLAY_DAYS = {
+    clear_skies_gold_rush = 2,
+    clear_skies_mini_raid_2_park = 3,
+    clear_skies_mini_raid_2_destroyed = 3,
+}
+
 -- the original mod only ships a legacy mod.xml, which BeardLib loads in compat mode (SuperBLT doesn't know it)
 function ExtraAchievs:HasPickpocket()
     return BeardLib.Frameworks.Base._loaded_mods[PICKPOCKET_MOD] ~= nil
@@ -70,7 +76,8 @@ function ExtraAchievs:CheckPickpocket(state)
     local event_index = state._current_job_data.current_event
     local is_operation = state._current_job_data.job_type == OperationsTweakData.JOB_TYPE_OPERATION
 
-    if not state._job_memory.stealth or managers.statistics._global.session.killed.total.count ~= 0 then
+    if not state._job_memory.stealth or managers.statistics._global.session.killed.total.count ~= 0
+        or self._run.kills ~= 0 then
         return
     end
 
@@ -78,10 +85,12 @@ function ExtraAchievs:CheckPickpocket(state)
         if self._run.gold >= 2 then
             self:Unlock("pacifist_rogues_gallery_" .. state._difficulty, PACKAGE_ID)
         end
-    elseif is_operation and job_id == "clear_skies" then
-        if event_index == 2 then -- ENIGMATIC
+    else
+        -- free play runs a single operation event as a plain raid, with the event's mission_id as job_id
+        local day = is_operation and job_id == "clear_skies" and event_index or FREE_PLAY_DAYS[job_id]
+        if day == 2 then -- ENIGMATIC
             self:Unlock("pacifist_enigmatic_" .. state._difficulty, PACKAGE_ID)
-        elseif event_index == 3 then -- BURNING MAN
+        elseif day == 3 then -- BURNING MAN
             self:Unlock("pacifist_burning_man", PACKAGE_ID)
         end
     end

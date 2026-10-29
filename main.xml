@@ -32,6 +32,8 @@
               file="ExtraAchievs.lua" />
         <hook source_file="lib/managers/raidjobmanager"
               file="ExtraAchievs.lua" />
+        <hook source_file="lib/units/enemies/cop/copdamage"
+              file="CopDamage.lua" />
         <hook source_file="lib/units/beings/player/playerdamage"
               file="PlayerDamage.lua" />
         <hook source_file="lib/tweak_data/achievementtweakdata"
