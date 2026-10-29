@@ -66,6 +66,13 @@ if not ExtraAchievs._hooked_pickpocket_tweak then
     end)
 end
 
+-- a higher difficulty also unlocks all lower ones ("difficulty_3" -> difficulty_1..3)
+function ExtraAchievs:UnlockUpTo(prefix, difficulty)
+    for i = 1, tonumber(tostring(difficulty):match("%d+")) or 0 do
+        self:Unlock(prefix .. "_difficulty_" .. i, PACKAGE_ID)
+    end
+end
+
 -- called once per finished mission (see EventCompleteState.lua)
 function ExtraAchievs:CheckPickpocket(state)
     if not self:HasPickpocket() or not state._success then
@@ -83,13 +90,13 @@ function ExtraAchievs:CheckPickpocket(state)
 
     if not is_operation and job_id == "sto" then -- ROGUES GALLERY, with 2 gold secured
         if self._run.gold >= 2 then
-            self:Unlock("pacifist_rogues_gallery_" .. state._difficulty, PACKAGE_ID)
+            self:UnlockUpTo("pacifist_rogues_gallery", state._difficulty)
         end
     else
         -- free play runs a single operation event as a plain raid, with the event's mission_id as job_id
         local day = is_operation and job_id == "clear_skies" and event_index or FREE_PLAY_DAYS[job_id]
         if day == 2 then -- ENIGMATIC
-            self:Unlock("pacifist_enigmatic_" .. state._difficulty, PACKAGE_ID)
+            self:UnlockUpTo("pacifist_enigmatic", state._difficulty)
         elseif day == 3 then -- BURNING MAN
             self:Unlock("pacifist_burning_man", PACKAGE_ID)
         end
