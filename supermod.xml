@@ -6,7 +6,7 @@
      color="Color(0.24,0.24,0.24)">
     <updates>
         <update identifier="extraachievs">
-            <host meta="https://raw.githubusercontent.com/BangL/raid-mods-meta/main/extraachievs.json"/>
+            <host meta="https://raw.githubusercontent.com/BangL/raid-mods-meta/main/extraachievs.json" patchnotes="https://github.com/BangL/ExtraAchievs/blob/master/CHANGELOG.md"/>
         </update>
     </updates>
     <dependencies>
