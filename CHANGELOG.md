@@ -1,3 +1,6 @@
+0.2.5:
+- fix: "Cant take it anymore" never counted (jumping from the bridge is a normal deadly fall, not the freefall state)
+
 0.2.4:
 - multiplayer: blammosweep and the Pickpocket achievements are decided by the host and synced to the clients (without the mod on the host, clients judge the Pickpocket ones themselves if they were there from the start)
 - Pickpocket: toast for everyone when the pacifist run fails (first enemy kill or alarm)

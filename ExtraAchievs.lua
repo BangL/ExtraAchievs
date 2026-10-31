@@ -62,13 +62,13 @@ function ExtraAchievs:Unlock(id, package_id)
 end
 
 -- local player died from a fall (called from PlayerDamage:damage_fall)
--- in_freefall: the player was in the freefall state (mechanic when jumping from very high up), which sends them
+-- deadly_fall: fell from above FALL_DAMAGE_DEATH_HEIGHT (jumping from very high up), which sends them
 -- straight to custody instead of bleeding out
-function ExtraAchievs:OnFallDeath(data, in_freefall)
+function ExtraAchievs:OnFallDeath(data, deadly_fall)
     local job = managers.raid_job:current_job()
 
     -- cant_take_it_anymore: jump from the very top of the bridge in TRAIN WRECK
-    if in_freefall and job and job.job_id == "ger_bridge" and job.job_type ~= OperationsTweakData.JOB_TYPE_OPERATION then
+    if deadly_fall and job and job.job_id == "ger_bridge" and job.job_type ~= OperationsTweakData.JOB_TYPE_OPERATION then
         self:Unlock("cant_take_it_anymore")
     end
 end
