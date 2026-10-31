@@ -1,4 +1,8 @@
 {
+  "extra_achievs_pacifist_failed": "Pacifist run failed (%s): %s",
+  "extra_achievs_pacifist_failed_kill": "an enemy was killed",
+  "extra_achievs_pacifist_failed_alarm": "the alarm was raised",
+
   "extra_achievements_name": "Extra Achievements - General",
 
   "no_blood_on_the_risers_name": "No blood on the risers",

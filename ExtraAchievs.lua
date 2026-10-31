@@ -1,12 +1,44 @@
 -- Loot tracking for blammosweep. Hooked on several game classes (see main.xml), each one is patched as soon as it exists.
--- Greed items and intel documents only exist on the host, so blammosweep can only be earned as host.
+-- Greed items and intel documents only exist on the host, so the host checks blammosweep and tells the clients.
 ExtraAchievs = ExtraAchievs or {}
 ExtraAchievs.GOLD_RUSH_GOLD = 40
+ExtraAchievs.BLAMMOSWEEP_MSG = "ExtraAchievs_blammosweep"
+ExtraAchievs.PICKPOCKET_MSG = "ExtraAchievs_pickpocket"
+ExtraAchievs.PICKPOCKET_FAIL_MSG = "ExtraAchievs_pickpocket_fail"
+ExtraAchievs.HELLO_MSG = "ExtraAchievs_hello" -- host: "I judge the Pickpocket achievements for everyone"
+
+if not ExtraAchievs._hooked_network then
+    ExtraAchievs._hooked_network = true
+
+    Hooks:Add("NetworkReceivedData", "ExtraAchievs_NetworkReceivedData", function(sender, id)
+        if Network:is_server() or (id ~= ExtraAchievs.BLAMMOSWEEP_MSG and id ~= ExtraAchievs.HELLO_MSG) then
+            return
+        end
+        if not ExtraAchievs:IsHost(sender) then
+            return
+        end
+        if id == ExtraAchievs.HELLO_MSG then
+            ExtraAchievs._hello_session = managers.network:session() -- valid for this lobby only
+        else
+            ExtraAchievs:Unlock("blammosweep")
+        end
+    end)
+end
+
+-- sender of a LuaNetworking message is the host
+function ExtraAchievs:IsHost(sender)
+    local session = managers.network:session()
+    local host = session and session:server_peer()
+    return host ~= nil and sender == host:id()
+end
 
 function ExtraAchievs:ResetRun()
     self._run = {
         gold = 0,        -- secured gold bars
+        started = false, -- session we saw the mission start in (not a drop-in), so gold and kills are complete
+        ended = false,   -- the mission is over (stage_success is no use: it stays set from the camp)
         kills = 0,       -- enemy deaths by anyone
+        pacifist_failed = false, -- the "run failed" toast was already shown
         cache_units = {}, -- world_id -> greed cache units that were spawned
         intel_units = {}, -- world_id -> chosen intel document unit
     }
@@ -127,9 +159,19 @@ end
 if RaidJobManager and not ExtraAchievs._hooked_job then
     ExtraAchievs._hooked_job = true
 
+    Hooks:PreHook(RaidJobManager, "do_external_end_mission", "ExtraAchievs_RaidJobManager_pre_do_external_end_mission",
+        function()
+            ExtraAchievs._run.ended = true
+        end
+    )
+
     Hooks:PostHook(RaidJobManager, "external_start_mission_clbk", "ExtraAchievs_RaidJobManager_post_external_start_mission_clbk",
         function()
             ExtraAchievs:ResetRun()
+            ExtraAchievs._run.started = managers.network:session() -- the lobby it was seen in
+            if Network:is_server() and LuaNetworking:IsMultiplayer() and ExtraAchievs:HasPickpocket() then
+                LuaNetworking:SendToPeers(ExtraAchievs.HELLO_MSG, "1")
+            end
         end
     )
 end

@@ -18,6 +18,8 @@ for i, v in ipairs(ENIGMATIC) do
 end
 table.insert(ACHIEVEMENTS, { id = "pacifist_burning_man", rank = 4, reward_type = "gold", reward_amount = 150 })
 
+local PREFIXES = { pacifist_rogues_gallery = true, pacifist_enigmatic = true, pacifist_burning_man = true }
+
 local FREE_PLAY_DAYS = {
     clear_skies_gold_rush = 2,
     clear_skies_mini_raid_2_park = 3,
@@ -73,9 +75,97 @@ function ExtraAchievs:UnlockUpTo(prefix, difficulty)
     end
 end
 
+local RAID_NAMES = { rogues_gallery = "ROGUES GALLERY", enigmatic = "ENIGMATIC", burning_man = "BURNING MAN" }
+
+-- which pacifist achievement set the current mission belongs to (same rules as CheckPickpocket)
+function ExtraAchievs:PickpocketTarget()
+    local job = managers.raid_job:current_job()
+    if not job then
+        return nil
+    end
+    local is_operation = job.job_type == OperationsTweakData.JOB_TYPE_OPERATION
+    if not is_operation and job.job_id == "sto" then
+        return "rogues_gallery"
+    end
+    local day = is_operation and job.job_id == "clear_skies" and job.current_event or FREE_PLAY_DAYS[job.job_id]
+    return day == 2 and "enigmatic" or day == 3 and "burning_man" or nil
+end
+
+function ExtraAchievs:ShowPickpocketFail(target, reason)
+    if not RAID_NAMES[target] or (reason ~= "kill" and reason ~= "alarm") then
+        return
+    end
+    local loc = managers.localization
+    managers.notification:add_notification({
+        id = "extra_achievs_pacifist_failed",
+        duration = 6,
+        shelf_life = 8,
+        text = loc:text("extra_achievs_pacifist_failed"):format(RAID_NAMES[target], loc:text("extra_achievs_pacifist_failed_" .. reason)),
+    })
+end
+
+-- the host judges the Pickpocket achievements. A client only does so itself if the host doesn't (no hello received),
+-- and only if it saw the mission start, otherwise it missed gold and kills.
+function ExtraAchievs:JudgesPickpocket()
+    if Network:is_server() then
+        return true
+    end
+    local session = managers.network:session()
+    return self._run.started == session and self._hello_session ~= session
+end
+
+-- the first enemy death or the alarm ends the pacifist run, everyone gets a toast (once per mission)
+function ExtraAchievs:FailPickpocket(reason)
+    if not self:JudgesPickpocket() or self._run.pacifist_failed or not self:HasPickpocket() then
+        return
+    end
+    local target = self:PickpocketTarget()
+    if not target or self._run.ended then -- end scripts may still flip the whisper state
+        return
+    end
+    self._run.pacifist_failed = true
+    self:ShowPickpocketFail(target, reason)
+    if Network:is_server() and LuaNetworking:IsMultiplayer() then
+        LuaNetworking:SendToPeers(self.PICKPOCKET_FAIL_MSG, target .. ":" .. reason)
+    end
+end
+
+function ExtraAchievs:ApplyPickpocket(prefix, difficulty)
+    if difficulty then
+        self:UnlockUpTo(prefix, difficulty)
+    else
+        self:Unlock(prefix, PACKAGE_ID)
+    end
+end
+
+-- the host decides (it sees every kill and the secured loot, a client that joined late doesn't) and tells the clients
+if not ExtraAchievs._hooked_pickpocket_network then
+    ExtraAchievs._hooked_pickpocket_network = true
+
+    Hooks:Add("NetworkReceivedData", "ExtraAchievs_pickpocket_fail_NetworkReceivedData", function(sender, id, data)
+        if id ~= ExtraAchievs.PICKPOCKET_FAIL_MSG or Network:is_server() or not ExtraAchievs:HasPickpocket() then
+            return
+        end
+        local target, reason = tostring(data):match("^([%w_]+):(%a+)$")
+        if target and ExtraAchievs:IsHost(sender) then
+            ExtraAchievs:ShowPickpocketFail(target, reason)
+        end
+    end)
+
+    Hooks:Add("NetworkReceivedData", "ExtraAchievs_pickpocket_NetworkReceivedData", function(sender, id, data)
+        if id ~= ExtraAchievs.PICKPOCKET_MSG or Network:is_server() or not ExtraAchievs:HasPickpocket() then
+            return
+        end
+        local prefix, difficulty = tostring(data):match("^([%w_]+):(%d*)$")
+        if prefix and PREFIXES[prefix] and ExtraAchievs:IsHost(sender) then
+            ExtraAchievs:ApplyPickpocket(prefix, tonumber(difficulty))
+        end
+    end)
+end
+
 -- called once per finished mission (see EventCompleteState.lua)
 function ExtraAchievs:CheckPickpocket(state)
-    if not self:HasPickpocket() or not state._success then
+    if not self:JudgesPickpocket() or not self:HasPickpocket() or not state._success then
         return
     end
 
@@ -88,17 +178,25 @@ function ExtraAchievs:CheckPickpocket(state)
         return
     end
 
+    local prefix, difficulty
     if not is_operation and job_id == "sto" then -- ROGUES GALLERY, with 2 gold secured
         if self._run.gold >= 2 then
-            self:UnlockUpTo("pacifist_rogues_gallery", state._difficulty)
+            prefix, difficulty = "pacifist_rogues_gallery", tonumber(tostring(state._difficulty):match("%d+")) or 0
         end
     else
         -- free play runs a single operation event as a plain raid, with the event's mission_id as job_id
         local day = is_operation and job_id == "clear_skies" and event_index or FREE_PLAY_DAYS[job_id]
         if day == 2 then -- ENIGMATIC
-            self:UnlockUpTo("pacifist_enigmatic", state._difficulty)
+            prefix, difficulty = "pacifist_enigmatic", tonumber(tostring(state._difficulty):match("%d+")) or 0
         elseif day == 3 then -- BURNING MAN
-            self:Unlock("pacifist_burning_man", PACKAGE_ID)
+            prefix = "pacifist_burning_man"
+        end
+    end
+
+    if prefix then
+        self:ApplyPickpocket(prefix, difficulty)
+        if Network:is_server() and LuaNetworking:IsMultiplayer() then
+            LuaNetworking:SendToPeers(self.PICKPOCKET_MSG, prefix .. ":" .. (difficulty or ""))
         end
     end
 end

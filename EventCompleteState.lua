@@ -23,6 +23,7 @@ Hooks:PostHook(EventCompleteState, "_check_complete_achievements",
         local is_very_hard = self._difficulty == "difficulty_4"
 
         if is_operation or not is_very_hard then
+            ExtraAchievs:ResetRun()
             return
         end
 
@@ -45,6 +46,9 @@ Hooks:PostHook(EventCompleteState, "_check_complete_achievements",
         -- blammosweep: GOLD RUSH with all gold, dogtags, greed items, greed cache and intel secured
         if job_id == "gold_rush" and ExtraAchievs:IsAllLootSecured(self) then
             unlock("blammosweep")
+            if LuaNetworking:IsMultiplayer() then
+                LuaNetworking:SendToPeers(ExtraAchievs.BLAMMOSWEEP_MSG, "1") -- the clients can't see this themselves
+            end
         end
 
         ExtraAchievs:ResetRun()
