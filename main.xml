@@ -44,5 +44,11 @@
               file="Pickpocket.lua" />
         <hook source_file="lib/states/eventcompletestate"
               file="EventCompleteState.lua" />
+        <hook source_file="lib/tweak_data/achievementtweakdata"
+              file="WeaponMaster.lua" />
+        <hook source_file="lib/managers/localizationmanager"
+              file="WeaponMaster.lua" />
+        <hook source_file="lib/managers/weaponskillsmanager"
+              file="WeaponMaster.lua" />
     </Hooks>
 </mod>

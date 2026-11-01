@@ -21,6 +21,10 @@
   "cant_take_it_anymore_desc": "jump from the very top of the bridge in TRAIN WRECK and die from the fall",
   "cant_take_it_anymore_objective": "jump from the very top of the bridge in TRAIN WRECK and die from the fall",
 
+  "extra_achievements_weapons_name": "Extra Achievements - Weapon challenges",
+  "extra_achievs_weapon_master_name": "%s - Mastered",
+  "extra_achievs_weapon_master_desc": "complete all weapon challenges of the %s",
+
   "extra_achievements_pickpocket_name": "Extra Achievements - Pickpocket mission equipment",
 
   "pacifist_rogues_gallery_difficulty_1_name": "Peace and Greed - EASY",
