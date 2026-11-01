@@ -9,14 +9,26 @@ ExtraAchievs.UNLOCK_MSG = "ExtraAchievs_unlock" -- host decided an achievement f
 ExtraAchievs.HELLO_MSG = "ExtraAchievs_hello" -- host: "I judge the Pickpocket achievements for everyone"
 
 -- achievements the host decides and tells the clients (they can't see the weapons of other peers' kills)
-ExtraAchievs.HOST_ACHIEVEMENTS = { for_the_motherland = true, deutschland_den_deutschen = true, protect_lange = true }
+ExtraAchievs.HOST_ACHIEVEMENTS = { for_the_motherland = true, deutschland_den_deutschen = true, protect_lange = true,
+    dont_be_so_whiney = true, sicher_ist_sicher = true, dont_you_dare_to_explode = true, this_is_seeadler = true }
 
 -- weapon ids (npc variants have a suffix, see WeaponId)
 ExtraAchievs.RUSSIAN_WEAPONS = { tt33 = true, mosin = true, dp28 = true }
-ExtraAchievs.GERMAN_WEAPONS = { c96 = true, mp38 = true, mp44 = true, kar_98k = true, mg42 = true, geco = true }
+ExtraAchievs.GERMAN_WEAPONS = { c96 = true, mp38 = true, mp44 = true, kar_98k = true, mg42 = true, geco = true,
+    georg = true, -- Luger P08
+    m24 = true, concrete = true, d343 = true, gold_bar = true, betty = true, -- grenades, spring mine
+    german_brass_knuckles = true }
 ExtraAchievs.GENERALS = { soviet_nkvd_int_security_captain = true, soviet_nkvd_int_security_captain_b = true }
 ExtraAchievs.GENERALS_COUNT = 2 -- STRONGPOINT
 ExtraAchievs.OFFICERS = { fb_german_commander = true, fb_german_commander_boss = true } -- FULL STOP
+
+-- mission elements that say "the goal is reached" (id -> job and goal), judged by the host when the mission is complete
+ExtraAchievs.GOAL_ELEMENTS = {
+    [101403] = { job = "forest_gumpy", goal = "gold_trucks" }, -- ex_lootcounter_eq0: all gold of the trucks secured
+    [100763] = { job = "ger_bridge", goal = "train_gold" },    -- logic_link_all_gold_in: all gold of the train secured
+}
+ExtraAchievs.WHINEY_OBJECTIVE = "obj_ger_castle_op_02" -- Firestarter: shoot the wine barrels (sub objective counts them)
+ExtraAchievs.FLAMER_FIRE = "flamer_incendiary" -- fire tweak id of the pool the incendiary grenade of the flamer leaves
 
 if not ExtraAchievs._hooked_network then
     ExtraAchievs._hooked_network = true
@@ -45,6 +57,47 @@ function ExtraAchievs:IsHost(sender)
     local session = managers.network:session()
     local host = session and session:server_peer()
     return host ~= nil and sender == host:id()
+end
+
+-- host: a goal element of the mission script was executed (called from MissionScriptElement:on_executed)
+function ExtraAchievs:OnElementExecuted(element)
+    local goal = self.GOAL_ELEMENTS[element._id]
+    if goal and Network:is_server() and element._values.enabled then
+        local job = managers.raid_job and managers.raid_job:current_job()
+        if job and job.job_id == goal.job then
+            self._run.goals[goal.goal] = true
+        end
+    end
+end
+
+function ExtraAchievs:IsRocket(unit)
+    local name = alive(unit) and unit:name():t()
+    return name and name:find("rocket_v2", 1, true) and name:find("redtip", 1, true) and true or false
+end
+
+-- true if every red-tipped rocket that was placed (and not taken away by the mission script) went off
+function ExtraAchievs:AllRocketsDestroyed()
+    local exploded = 0
+    for _, rocket in pairs(self._rockets) do
+        if rocket.exploded then
+            exploded = exploded + 1
+        elseif not rocket.disabled then
+            return false
+        end
+    end
+    return exploded > 0
+end
+
+-- host: checks of the raid goals, called once the mission is complete (difficulty is the number of difficulty_N)
+function ExtraAchievs:CheckGoals(job_id, difficulty)
+    local goals = self._run.goals
+    if job_id == "silo" and difficulty >= 3 and self:AllRocketsDestroyed() then
+        self:UnlockForAll("sicher_ist_sicher")
+    elseif job_id == "forest_gumpy" and difficulty >= 3 and goals.gold_trucks then
+        self:UnlockForAll("dont_you_dare_to_explode")
+    elseif job_id == "ger_bridge" and difficulty >= 4 and goals.train_gold then
+        self:UnlockForAll("this_is_seeadler")
+    end
 end
 
 -- unlock for the local player and, as host, tell the clients
@@ -104,8 +157,17 @@ function ExtraAchievs:ResetRun()
         pacifist_failed = false, -- the "run failed" toast was already shown
         cache_units = {}, -- world_id -> greed cache units that were spawned
         intel_units = {}, -- world_id -> chosen intel document unit
+        goals = {},      -- goal -> true, see GOAL_ELEMENTS
     }
+    -- rockets are placed with the world, which may be before the mission start: keep the ones that still exist
+    for key, rocket in pairs(self._rockets or {}) do
+        if not alive(rocket.unit) then
+            self._rockets[key] = nil
+        end
+    end
 end
+
+ExtraAchievs._rockets = ExtraAchievs._rockets or {} -- unit key -> { unit, exploded, disabled } of the red-tipped V2 rockets
 
 if not ExtraAchievs._run then
     ExtraAchievs:ResetRun()
@@ -234,6 +296,63 @@ if RaidJobManager and not ExtraAchievs._hooked_job then
             ExtraAchievs._run.started = managers.network:session() -- the lobby it was seen in
             if Network:is_server() and LuaNetworking:IsMultiplayer() and ExtraAchievs:HasPickpocket() then
                 LuaNetworking:SendToPeers(ExtraAchievs.HELLO_MSG, "1")
+            end
+        end
+    )
+end
+
+if ExplodingProp and not ExtraAchievs._hooked_rockets then
+    ExtraAchievs._hooked_rockets = true
+
+    Hooks:PostHook(ExplodingProp, "init", "ExtraAchievs_ExplodingProp_post_init", function(self, unit)
+        if ExtraAchievs:IsRocket(unit) then
+            ExtraAchievs._rockets[unit:key()] = { unit = unit }
+        end
+    end)
+
+    Hooks:PostHook(ExplodingProp, "detonate", "ExtraAchievs_ExplodingProp_post_detonate", function(self)
+        local rocket = alive(self._unit) and ExtraAchievs._rockets[self._unit:key()]
+        if rocket then
+            rocket.exploded = true
+        end
+    end)
+end
+
+if GamePlayCentralManager and not ExtraAchievs._hooked_gameplaycentral then
+    ExtraAchievs._hooked_gameplaycentral = true
+
+    -- the mission script takes the black-tipped or the red-tipped rockets away, those are not spawned
+    Hooks:PostHook(GamePlayCentralManager, "mission_disable_unit", "ExtraAchievs_GamePlayCentralManager_post_mission_disable_unit", function(self, unit)
+        local rocket = alive(unit) and ExtraAchievs._rockets[unit:key()]
+        if rocket then
+            rocket.disabled = true
+        end
+    end)
+
+    Hooks:PostHook(GamePlayCentralManager, "mission_enable_unit", "ExtraAchievs_GamePlayCentralManager_post_mission_enable_unit", function(self, unit)
+        local rocket = alive(unit) and ExtraAchievs._rockets[unit:key()]
+        if rocket then
+            rocket.disabled = nil
+        end
+    end)
+end
+
+if ObjectivesManager and not ExtraAchievs._hooked_objectives then
+    ExtraAchievs._hooked_objectives = true
+
+    -- dont_be_so_whiney: Firestarter counts the destroyed wine barrels as sub objective, which is finished with the last one
+    Hooks:PostHook(ObjectivesManager, "complete_sub_objective", "ExtraAchievs_ObjectivesManager_post_complete_sub_objective",
+        function(self, id, sub_id, load_data)
+            if id ~= ExtraAchievs.WHINEY_OBJECTIVE or load_data or not Network:is_server() then
+                return
+            end
+            if (tonumber(tostring(Global.game_settings.difficulty):match("%d+")) or 0) < 3 then -- HARD and up
+                return
+            end
+            local objective = self._objectives[id]
+            local sub_objective = objective and objective.sub_objectives[sub_id]
+            if sub_objective and sub_objective.completed then
+                ExtraAchievs:UnlockForAll("dont_be_so_whiney")
             end
         end
     )

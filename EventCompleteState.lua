@@ -20,7 +20,12 @@ Hooks:PostHook(EventCompleteState, "_check_complete_achievements",
         local is_operation = self._current_job_data.job_type == OperationsTweakData.JOB_TYPE_OPERATION
         ExtraAchievs:CheckPickpocket(self)
 
-        local is_very_hard = self._difficulty == "difficulty_4"
+        local difficulty = tonumber(tostring(self._difficulty):match("%d+")) or 0
+        local is_very_hard = difficulty >= 4
+
+        if not is_operation and Network:is_server() then
+            ExtraAchievs:CheckGoals(job_id, difficulty)
+        end
 
         if is_operation or not is_very_hard then
             ExtraAchievs:ResetRun()

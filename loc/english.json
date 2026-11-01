@@ -27,7 +27,7 @@
 
   "for_the_motherland_name": "For the motherland",
   "for_the_motherland_desc": "kill both generals in STRONGPOINT with russian weapons (kills by your team count)",
-  "for_the_motherland_objective": "STRONGPOINT (raid only, not as part of an operation): kill both Soviet generals with russian weapons (TT-33, Mosin-Nagant, DP-28). Kills by anyone count, so your teammates and the bots may do one or both, as long as both kills were made with a russian weapon. Melee and grenade kills do not count. The host decides and unlocks it for every player in the lobby.",
+  "for_the_motherland_objective": "STRONGPOINT (raid only, not as part of an operation): kill both Soviet generals with russian weapons (Tokarev TT-33, Mosin Nagant, Degtyaryov DP-28). Kills by anyone count, so your teammates and the bots may do one or both, as long as both kills were made with a russian weapon. The host decides and unlocks it for every player in the lobby.",
 
   "perfect_cut_name": "Perfect cut",
   "perfect_cut_desc": "cut a bomb fuse completely, without a single miss",
@@ -35,7 +35,43 @@
 
   "deutschland_den_deutschen_name": "Deutschland den Deutschen",
   "deutschland_den_deutschen_desc": "kill the officer in FULL STOP with a german weapon",
-  "deutschland_den_deutschen_objective": "FULL STOP (raid only, not as part of an operation): kill the officer with a german weapon (C96, MP38, MP44, Kar98k, MG42, Geco). The final blow counts, no matter who dealt the earlier damage: a teammate or bot with a german weapon also works. Melee and grenade kills do not count. The host decides and unlocks it for every player in the lobby.",
+  "deutschland_den_deutschen_objective": "FULL STOP (raid only, not as part of an operation): kill the officer with a german weapon (C96 Mauser, MP 38, StG 44, Karabiner 98k, MG 42, Double-Barrel, Parabellum P08, M24 grenade, Concrete grenade, 343d grenade, Gold Bar, Spring Mine, German Knuckleduster). The final blow counts, no matter who dealt the earlier damage: a teammate or bot with a german weapon also works. The host decides and unlocks it for every player in the lobby.",
+
+  "hans_forget_the_flammenwerfer_name": "HANS forget the FLAMMENWERFER",
+  "hans_forget_the_flammenwerfer_desc": "get put down by the fire of a flamer's incendiary grenade",
+  "hans_forget_the_flammenwerfer_objective": "Get put down by the fire pool an incendiary grenade thrown by a flamer leaves on the ground. The fire of the flamethrower itself does not count. Works in any mission and on any difficulty.",
+
+  "dont_be_so_whiney_name": "Dont be so w(h)iney",
+  "dont_be_so_whiney_desc": "destroy all wine barrels in FIRESTARTER on HARD",
+  "dont_be_so_whiney_objective": "FIRESTARTER on HARD or VERY HARD (the castle of operation Rhinegold): destroy every wine barrel of the objective. Barrels destroyed by anyone or by the fire count. The host decides and unlocks it for every player in the lobby.",
+
+  "sicher_ist_sicher_name": "Sicher ist sicher!",
+  "sicher_ist_sicher_desc": "destroy all rockets in COUNTDOWN on HARD",
+  "sicher_ist_sicher_objective": "COUNTDOWN on HARD or VERY HARD (raid only, not as part of an operation): blow up every rocket with a red tip that stands in the silo. Rockets destroyed by anyone count. The host decides and unlocks it for every player in the lobby.",
+
+  "dont_you_dare_to_explode_name": "Dont you dare to explode",
+  "dont_you_dare_to_explode_desc": "secure all gold of the trucks in FOREST CONVOY on HARD",
+  "dont_you_dare_to_explode_objective": "FOREST CONVOY on HARD or VERY HARD (raid only, not as part of an operation): secure all the gold of the trucks. Gold lost with an exploded truck can't be secured. The host decides and unlocks it for every player in the lobby.",
+
+  "this_is_seeadler_name": "This is Seeadler",
+  "this_is_seeadler_desc": "secure all gold of the train in TRAIN WRECK on VERY HARD",
+  "this_is_seeadler_objective": "TRAIN WRECK on VERY HARD (raid only, not as part of an operation): secure all the gold of the train. The host decides and unlocks it for every player in the lobby.",
+
+  "assault_mastery_name": "Assault mastery",
+  "assault_mastery_desc": "bring every warcry, boost and talent of the Assault class to its highest tier",
+  "assault_mastery_objective": "Bring every warcry, boost and talent of the Assault class (2 warcries, 6 boosts, 23 talents) to tier 4. It is enough to do this on one Assault character, and it counts for the whole profile. Characters that are already finished unlock it when the savegame is loaded; otherwise it unlocks when the last skill reaches tier 4 (skills only gain experience while they are applied).",
+
+  "recon_mastery_name": "Recon mastery",
+  "recon_mastery_desc": "bring every warcry, boost and talent of the Recon class to its highest tier",
+  "recon_mastery_objective": "Bring every warcry, boost and talent of the Recon class (2 warcries, 6 boosts, 23 talents) to tier 4. It is enough to do this on one Recon character, and it counts for the whole profile. Characters that are already finished unlock it when the savegame is loaded; otherwise it unlocks when the last skill reaches tier 4 (skills only gain experience while they are applied).",
+
+  "infiltrator_mastery_name": "Insurgent mastery",
+  "infiltrator_mastery_desc": "bring every warcry, boost and talent of the Insurgent class to its highest tier",
+  "infiltrator_mastery_objective": "Bring every warcry, boost and talent of the Insurgent class (2 warcries, 6 boosts, 23 talents) to tier 4. It is enough to do this on one Insurgent character, and it counts for the whole profile. Characters that are already finished unlock it when the savegame is loaded; otherwise it unlocks when the last skill reaches tier 4 (skills only gain experience while they are applied).",
+
+  "demolitions_mastery_name": "Demolitions mastery",
+  "demolitions_mastery_desc": "bring every warcry, boost and talent of the Demolitions class to its highest tier",
+  "demolitions_mastery_objective": "Bring every warcry, boost and talent of the Demolitions class (2 warcries, 6 boosts, 23 talents) to tier 4. It is enough to do this on one Demolitions character, and it counts for the whole profile. Characters that are already finished unlock it when the savegame is loaded; otherwise it unlocks when the last skill reaches tier 4 (skills only gain experience while they are applied).",
 
   "extra_achievements_weapons_name": "Extra Achievements - Weapon challenges",
   "extra_achievs_weapon_master_name": "%s - Mastered",

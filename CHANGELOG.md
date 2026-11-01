@@ -1,3 +1,8 @@
+0.5:
+- new achievements: the four class masteries (Assault, Recon, Insurgent, Demolitions: every skill of the class at tier 4)
+- new achievements: "HANS forget the FLAMMENWERFER" (put down by the fire pool of a flamer's incendiary grenade), "Dont be so w(h)iney" (all wine barrels in FIRESTARTER on HARD), "Sicher ist sicher!" (all red-tipped rockets in COUNTDOWN on HARD), "Dont you dare to explode" (all gold of the trucks in FOREST CONVOY on HARD), "This is Seeadler" (all gold of the train in TRAIN WRECK on VERY HARD)
+- multiplayer: all but the first one are decided by the host and synced to the clients
+
 0.4:
 - new achievements: "Lange Wartezeit" (WIRETAP on VERY HARD with Lange alive), "For the motherland" (both STRONGPOINT generals killed with russian weapons), "Perfect cut" (bomb fuse cut without a miss), "Deutschland den Deutschen" (FULL STOP officer killed with a german weapon)
 - multiplayer: the weapon based ones and Lange Wartezeit are decided by the host and synced to the clients
