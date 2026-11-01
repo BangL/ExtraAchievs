@@ -59,7 +59,9 @@ if not ExtraAchievs._hooked_brot then
 
     Hooks:Add("GameSetupUpdate", "ExtraAchievs_GameSetupUpdate", function(t, dt)
         local job = managers.raid_job and managers.raid_job:current_job()
-        local spot = job and job.current_event_data and ExtraAchievs.BROT_MISSIONS[job.current_event_data.mission_id] and ExtraAchievs.BROT_SPOT
+        -- free play runs the single event as a raid: no current_event_data, the event id is the job id
+        local mission_id = job and (job.current_event_data and job.current_event_data.mission_id or job.job_id)
+        local spot = mission_id and ExtraAchievs.BROT_MISSIONS[mission_id] and ExtraAchievs.BROT_SPOT
         local player = spot and managers.player and managers.player:local_player()
         local camera = spot and managers.viewport:get_current_camera()
         if not (alive(player) and camera and managers.player:current_state() ~= "bleed_out") then

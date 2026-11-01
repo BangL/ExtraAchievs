@@ -1,3 +1,6 @@
+0.6.3:
+- fix: BROT now works in free play
+
 0.6.2:
 - fix: the mission element hook now attaches (the 0.6.1 fix still failed to hook the core class)
 
