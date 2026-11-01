@@ -134,7 +134,7 @@
               file="ExtraAchievs.lua" />
         <hook source_file="lib/managers/firemanager"
               file="FireManager.lua" />
-        <hook source_file="core/lib/managers/mission/coremissionscriptelement"
+        <hook source_file="lib/managers/mission/missionscriptelement"
               file="MissionScriptElement.lua" />
         <hook source_file="lib/units/beings/player/playerdamage"
               file="PlayerDamage.lua" />

@@ -1,3 +1,6 @@
+0.6.2:
+- fix: the mission element hook now attaches (the 0.6.1 fix still failed to hook the core class)
+
 0.6.1:
 - fix: the mission element hook was never active (wrong environment), so element based achievements could not trigger
 
