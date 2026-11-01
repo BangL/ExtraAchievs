@@ -1,3 +1,6 @@
+0.6.1:
+- fix: the mission element hook was never active (wrong environment), so element based achievements could not trigger
+
 0.6:
 - new achievements: "Ouch! My Art!" (ROGUES GALLERY on VERY HARD: loud before the first loot, all paintings), "Tiger Hunter" (all King Tigers in TIGER TRAP on VERY HARD), "Come and See" (all gold in GOLD DIGGERS on VERY HARD without killing a sniper), "Enemy at the Gates" (sniper headshot with the Mosin from 50 m), "Greed killed the Communist" (both STRONGPOINT generals with the gold bar on HARD), "The game was rigged from the start" (FULL STOP officer with the Luger on HARD), "100 Nazi scalps for Aldo" (100 kills with the M3 knife on HARD or higher), "A nazi walks into a bar" (100 kills with the BAR or the gold bar on HARD or higher), "BROT" (admire the Brot store in RHINEGOLD day 2 for 20 seconds)
 - multiplayer: all but BROT are decided by the host and synced to the clients; the personal ones (sniper headshot, kill counters) go to the shooter only
