@@ -21,6 +21,22 @@
   "cant_take_it_anymore_desc": "jump from the very top of the bridge in TRAIN WRECK and die from the fall",
   "cant_take_it_anymore_objective": "jump from the very top of the bridge in TRAIN WRECK and die from the fall",
 
+  "protect_lange_name": "Lange Wartezeit",
+  "protect_lange_desc": "finish WIRETAP on VERY HARD with Lange still alive",
+  "protect_lange_objective": "WIRETAP on VERY HARD (raid only, not as part of an operation): finish the mission with Lange still alive. Lange dies when enemies reach his radio tower, so hold them off until he is done. The host decides and unlocks it for every player in the lobby.",
+
+  "for_the_motherland_name": "For the motherland",
+  "for_the_motherland_desc": "kill both generals in STRONGPOINT with russian weapons (kills by your team count)",
+  "for_the_motherland_objective": "STRONGPOINT (raid only, not as part of an operation): kill both Soviet generals with russian weapons (TT-33, Mosin-Nagant, DP-28). Kills by anyone count, so your teammates and the bots may do one or both, as long as both kills were made with a russian weapon. Melee and grenade kills do not count. The host decides and unlocks it for every player in the lobby.",
+
+  "perfect_cut_name": "Perfect cut",
+  "perfect_cut_desc": "cut a bomb fuse completely, without a single miss",
+  "perfect_cut_objective": "Cut a bomb fuse in the cutting minigame without a single miss: hit every cut point until the fuse is completely cut. A miss or leaving the minigame ends the attempt, so only a full run counts. Works in any mission with a fuse and on any difficulty. Everyone earns this one for their own cuts.",
+
+  "deutschland_den_deutschen_name": "Deutschland den Deutschen",
+  "deutschland_den_deutschen_desc": "kill the officer in FULL STOP with a german weapon",
+  "deutschland_den_deutschen_objective": "FULL STOP (raid only, not as part of an operation): kill the officer with a german weapon (C96, MP38, MP44, Kar98k, MG42, Geco). The final blow counts, no matter who dealt the earlier damage: a teammate or bot with a german weapon also works. Melee and grenade kills do not count. The host decides and unlocks it for every player in the lobby.",
+
   "extra_achievements_weapons_name": "Extra Achievements - Weapon challenges",
   "extra_achievs_weapon_master_name": "%s - Mastered",
   "extra_achievs_weapon_master_desc": "complete all weapon challenges of the %s",

@@ -5,6 +5,9 @@ function CopDamage:die(...)
     if not self._dead then
         ExtraAchievs._run.kills = ExtraAchievs._run.kills + 1
         ExtraAchievs:FailPickpocket("kill")
+        if Network:is_server() then
+            ExtraAchievs:OnEnemyDeath(self._unit, ...)
+        end
     end
     return die_original(self, ...)
 end

@@ -5,13 +5,24 @@ ExtraAchievs.GOLD_RUSH_GOLD = 40
 ExtraAchievs.BLAMMOSWEEP_MSG = "ExtraAchievs_blammosweep"
 ExtraAchievs.PICKPOCKET_MSG = "ExtraAchievs_pickpocket"
 ExtraAchievs.PICKPOCKET_FAIL_MSG = "ExtraAchievs_pickpocket_fail"
+ExtraAchievs.UNLOCK_MSG = "ExtraAchievs_unlock" -- host decided an achievement for everyone, data = achievement id
 ExtraAchievs.HELLO_MSG = "ExtraAchievs_hello" -- host: "I judge the Pickpocket achievements for everyone"
+
+-- achievements the host decides and tells the clients (they can't see the weapons of other peers' kills)
+ExtraAchievs.HOST_ACHIEVEMENTS = { for_the_motherland = true, deutschland_den_deutschen = true, protect_lange = true }
+
+-- weapon ids (npc variants have a suffix, see WeaponId)
+ExtraAchievs.RUSSIAN_WEAPONS = { tt33 = true, mosin = true, dp28 = true }
+ExtraAchievs.GERMAN_WEAPONS = { c96 = true, mp38 = true, mp44 = true, kar_98k = true, mg42 = true, geco = true }
+ExtraAchievs.GENERALS = { soviet_nkvd_int_security_captain = true, soviet_nkvd_int_security_captain_b = true }
+ExtraAchievs.GENERALS_COUNT = 2 -- STRONGPOINT
+ExtraAchievs.OFFICERS = { fb_german_commander = true, fb_german_commander_boss = true } -- FULL STOP
 
 if not ExtraAchievs._hooked_network then
     ExtraAchievs._hooked_network = true
 
-    Hooks:Add("NetworkReceivedData", "ExtraAchievs_NetworkReceivedData", function(sender, id)
-        if Network:is_server() or (id ~= ExtraAchievs.BLAMMOSWEEP_MSG and id ~= ExtraAchievs.HELLO_MSG) then
+    Hooks:Add("NetworkReceivedData", "ExtraAchievs_NetworkReceivedData", function(sender, id, data)
+        if Network:is_server() or (id ~= ExtraAchievs.BLAMMOSWEEP_MSG and id ~= ExtraAchievs.HELLO_MSG and id ~= ExtraAchievs.UNLOCK_MSG) then
             return
         end
         if not ExtraAchievs:IsHost(sender) then
@@ -19,6 +30,10 @@ if not ExtraAchievs._hooked_network then
         end
         if id == ExtraAchievs.HELLO_MSG then
             ExtraAchievs._hello_session = managers.network:session() -- valid for this lobby only
+        elseif id == ExtraAchievs.UNLOCK_MSG then
+            if ExtraAchievs.HOST_ACHIEVEMENTS[data] and managers.raid_job:current_job() then
+                ExtraAchievs:Unlock(data)
+            end
         else
             ExtraAchievs:Unlock("blammosweep")
         end
@@ -30,6 +45,54 @@ function ExtraAchievs:IsHost(sender)
     local session = managers.network:session()
     local host = session and session:server_peer()
     return host ~= nil and sender == host:id()
+end
+
+-- unlock for the local player and, as host, tell the clients
+function ExtraAchievs:UnlockForAll(id)
+    self:Unlock(id)
+    if LuaNetworking:IsMultiplayer() then
+        LuaNetworking:SendToPeers(self.UNLOCK_MSG, id)
+    end
+end
+
+function ExtraAchievs:WeaponId(attack_data)
+    local weapon_unit = attack_data and attack_data.weapon_unit
+    local base = alive(weapon_unit) and weapon_unit:base()
+    local name = base and base.get_name_id and base:get_name_id()
+    if not name then
+        return nil
+    end
+    return (tostring(name):gsub("_npc$", ""):gsub("_crew$", ""))
+end
+
+-- host: an enemy died (called from CopDamage:die). Kills by anyone count, the weapon decides.
+function ExtraAchievs:OnEnemyDeath(unit, attack_data)
+    local job = managers.raid_job and managers.raid_job:current_job()
+    if not job or job.job_type == OperationsTweakData.JOB_TYPE_OPERATION then
+        return
+    end
+
+    local base = alive(unit) and unit:base()
+    local tweak_name = base and base._tweak_table
+    if not tweak_name then
+        return
+    end
+
+    local weapon = self:WeaponId(attack_data)
+
+    -- for_the_motherland: both generals in STRONGPOINT killed with russian weapons
+    if job.job_id == "settlement" and self.GENERALS[tweak_name] and weapon and self.RUSSIAN_WEAPONS[weapon] then
+        local run = self._run
+        run.russian_general_kills = (run.russian_general_kills or 0) + 1
+        if run.russian_general_kills >= self.GENERALS_COUNT then
+            self:UnlockForAll("for_the_motherland")
+        end
+    end
+
+    -- deutschland_den_deutschen: the officer in FULL STOP killed with a german weapon
+    if job.job_id == "forest_bunker" and self.OFFICERS[tweak_name] and weapon and self.GERMAN_WEAPONS[weapon] then
+        self:UnlockForAll("deutschland_den_deutschen")
+    end
 end
 
 function ExtraAchievs:ResetRun()

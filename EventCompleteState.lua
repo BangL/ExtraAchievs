@@ -43,6 +43,15 @@ Hooks:PostHook(EventCompleteState, "_check_complete_achievements",
             unlock("let_them_watch")
         end
 
+        -- protect_lange: WIRETAP with Lange alive (the host judges: his death only switches off this operator, see
+        -- global_state_operator_franz_alive; it's the same one that makes the escort bonus go away)
+        if job_id == "radio_defense" and Network:is_server() then
+            local franz_alive = managers.mission:get_element_by_name("global_state_operator_franz_alive")
+            if franz_alive and franz_alive:enabled() then
+                ExtraAchievs:UnlockForAll("protect_lange")
+            end
+        end
+
         -- blammosweep: GOLD RUSH with all gold, dogtags, greed items, greed cache and intel secured
         if job_id == "gold_rush" and ExtraAchievs:IsAllLootSecured(self) then
             unlock("blammosweep")

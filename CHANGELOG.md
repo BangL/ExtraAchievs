@@ -1,3 +1,7 @@
+0.4:
+- new achievements: "Lange Wartezeit" (WIRETAP on VERY HARD with Lange alive), "For the motherland" (both STRONGPOINT generals killed with russian weapons), "Perfect cut" (bomb fuse cut without a miss), "Deutschland den Deutschen" (FULL STOP officer killed with a german weapon)
+- multiplayer: the weapon based ones and Lange Wartezeit are decided by the host and synced to the clients
+
 0.3:
 - new package "Weapon challenges": one achievement per weapon (2 upgrade tiers: bronze/50 gold, 3: silver/75, 4: gold/100) for completing all its weapon challenges; already finished weapons unlock on the first main menu with the mod
 
