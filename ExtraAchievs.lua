@@ -7,10 +7,14 @@ ExtraAchievs.PICKPOCKET_MSG = "ExtraAchievs_pickpocket"
 ExtraAchievs.PICKPOCKET_FAIL_MSG = "ExtraAchievs_pickpocket_fail"
 ExtraAchievs.UNLOCK_MSG = "ExtraAchievs_unlock" -- host decided an achievement for everyone, data = achievement id
 ExtraAchievs.HELLO_MSG = "ExtraAchievs_hello" -- host: "I judge the Pickpocket achievements for everyone"
+ExtraAchievs.PROGRESS_MSG = "ExtraAchievs_progress" -- host: one more counted kill for the receiver, data = KILL_COUNTERS key
+ExtraAchievs.PROGRESS_FILE = "ExtraAchievs.json" -- in SavePath, counters of the kill achievements
 
 -- achievements the host decides and tells the clients (they can't see the weapons of other peers' kills)
 ExtraAchievs.HOST_ACHIEVEMENTS = { for_the_motherland = true, deutschland_den_deutschen = true, protect_lange = true,
-    dont_be_so_whiney = true, sicher_ist_sicher = true, dont_you_dare_to_explode = true, this_is_seeadler = true }
+    dont_be_so_whiney = true, sicher_ist_sicher = true, dont_you_dare_to_explode = true, this_is_seeadler = true,
+    ouch_my_art = true, tiger_hunter = true, come_and_see = true, enemy_at_the_gates = true,
+    greed_killed_the_communist = true, the_game_was_rigged = true, nazi_scalps_for_aldo = true, a_nazi_walks_into_a_bar = true }
 
 -- weapon ids (npc variants have a suffix, see WeaponId)
 ExtraAchievs.RUSSIAN_WEAPONS = { tt33 = true, mosin = true, dp28 = true }
@@ -21,20 +25,68 @@ ExtraAchievs.GERMAN_WEAPONS = { c96 = true, mp38 = true, mp44 = true, kar_98k = 
 ExtraAchievs.GENERALS = { soviet_nkvd_int_security_captain = true, soviet_nkvd_int_security_captain_b = true }
 ExtraAchievs.GENERALS_COUNT = 2 -- STRONGPOINT
 ExtraAchievs.OFFICERS = { fb_german_commander = true, fb_german_commander_boss = true } -- FULL STOP
+ExtraAchievs.SNIPER = "german_sniper"
+ExtraAchievs.GATES_DISTANCE = 5000 -- cm, headshot with the mosin
+ExtraAchievs.PAINTINGS = { carry_id = "painting_sto", count = 6 } -- ROGUES GALLERY, count = target of the paintings counter
+
+-- kills of the shooter that are counted over all raids (HARD and up): weapon id (WeaponId) -> counter and achievement
+ExtraAchievs.KILL_COUNTERS = {
+    m3_knife = { id = "nazi_scalps_for_aldo", target = 100 },
+}
+ExtraAchievs.KILL_COUNTERS.browning = { id = "a_nazi_walks_into_a_bar", target = 100 } -- BAR
+ExtraAchievs.KILL_COUNTERS.gold_bar = ExtraAchievs.KILL_COUNTERS.browning -- the gold bar grenade counts too
 
 -- mission elements that say "the goal is reached" (id -> job and goal), judged by the host when the mission is complete
 ExtraAchievs.GOAL_ELEMENTS = {
     [101403] = { job = "forest_gumpy", goal = "gold_trucks" }, -- ex_lootcounter_eq0: all gold of the trucks secured
     [100763] = { job = "ger_bridge", goal = "train_gold" },    -- logic_link_all_gold_in: all gold of the train secured
+    [100878] = { job = "tnd", goal = "tanks" },                -- tanks_destroyed_counter: all king tigers destroyed
+    [102159] = { job = "fury_railway", goal = "train_loot" },  -- trains_emptied_of_gold: the gold of all trains taken
 }
 ExtraAchievs.WHINEY_OBJECTIVE = "obj_ger_castle_op_02" -- Firestarter: shoot the wine barrels (sub objective counts them)
 ExtraAchievs.FLAMER_FIRE = "flamer_incendiary" -- fire tweak id of the pool the incendiary grenade of the flamer leaves
+
+-- brot: stand in front of the Brot store (operation mission id -> spot, cm) for BROT_TIME seconds
+ExtraAchievs.BROT_TIME = 20
+ExtraAchievs.BROT_RADIUS = 1000
+ExtraAchievs.BROT_TOLERANCE = 60 -- degrees
+-- the spot (nearly the same in both variants of RHINEGOLD day 2) and the compass heading to look at (the HUD compass shows -yaw)
+ExtraAchievs.BROT_SPOT = { pos = Vector3(2585, 4800, -17), heading = 30 }
+ExtraAchievs.BROT_MISSIONS = { oper_flamable_mini_raid_2_destroyed = true, oper_flamable_mini_raid_2_roundabout = true }
+
+if not ExtraAchievs._hooked_brot then
+    ExtraAchievs._hooked_brot = true
+
+    Hooks:Add("GameSetupUpdate", "ExtraAchievs_GameSetupUpdate", function(t, dt)
+        local job = managers.raid_job and managers.raid_job:current_job()
+        local spot = job and job.current_event_data and ExtraAchievs.BROT_MISSIONS[job.current_event_data.mission_id] and ExtraAchievs.BROT_SPOT
+        local player = spot and managers.player and managers.player:local_player()
+        local camera = spot and managers.viewport:get_current_camera()
+        if not (alive(player) and camera and managers.player:current_state() ~= "bleed_out") then
+            ExtraAchievs._brot_time = nil
+            return
+        end
+        local pos = player:position()
+        local heading = (-camera:rotation():yaw() - spot.heading + 180) % 360 - 180
+        if mvector3.distance(pos, spot.pos) <= ExtraAchievs.BROT_RADIUS and math.abs(pos.z - spot.pos.z) < 300
+            and math.abs(heading) <= ExtraAchievs.BROT_TOLERANCE then
+            ExtraAchievs._brot_time = (ExtraAchievs._brot_time or 0) + dt
+            if ExtraAchievs._brot_time >= ExtraAchievs.BROT_TIME then
+                ExtraAchievs:Unlock("brot")
+                ExtraAchievs._brot_time = nil
+            end
+        else
+            ExtraAchievs._brot_time = nil
+        end
+    end)
+end
 
 if not ExtraAchievs._hooked_network then
     ExtraAchievs._hooked_network = true
 
     Hooks:Add("NetworkReceivedData", "ExtraAchievs_NetworkReceivedData", function(sender, id, data)
-        if Network:is_server() or (id ~= ExtraAchievs.BLAMMOSWEEP_MSG and id ~= ExtraAchievs.HELLO_MSG and id ~= ExtraAchievs.UNLOCK_MSG) then
+        if Network:is_server() or (id ~= ExtraAchievs.BLAMMOSWEEP_MSG and id ~= ExtraAchievs.HELLO_MSG and id ~= ExtraAchievs.UNLOCK_MSG
+            and id ~= ExtraAchievs.PROGRESS_MSG) then
             return
         end
         if not ExtraAchievs:IsHost(sender) then
@@ -45,6 +97,10 @@ if not ExtraAchievs._hooked_network then
         elseif id == ExtraAchievs.UNLOCK_MSG then
             if ExtraAchievs.HOST_ACHIEVEMENTS[data] and managers.raid_job:current_job() then
                 ExtraAchievs:Unlock(data)
+            end
+        elseif id == ExtraAchievs.PROGRESS_MSG then
+            if ExtraAchievs.KILL_COUNTERS[data] and managers.raid_job:current_job() then
+                ExtraAchievs:AddKill(data)
             end
         else
             ExtraAchievs:Unlock("blammosweep")
@@ -97,6 +153,56 @@ function ExtraAchievs:CheckGoals(job_id, difficulty)
         self:UnlockForAll("dont_you_dare_to_explode")
     elseif job_id == "ger_bridge" and difficulty >= 4 and goals.train_gold then
         self:UnlockForAll("this_is_seeadler")
+    elseif job_id == "tnd" and difficulty >= 4 and goals.tanks then
+        self:UnlockForAll("tiger_hunter")
+    elseif job_id == "fury_railway" and difficulty >= 4 and goals.train_loot then
+        local killed = managers.statistics._global.session.killed[self.SNIPER]
+        if not killed or killed.count == 0 then
+            self:UnlockForAll("come_and_see")
+        end
+    elseif job_id == "sto" and difficulty >= 4 and self._run.loud_first_loot and (self._run.secured[self.PAINTINGS.carry_id] or 0) >= self.PAINTINGS.count then
+        self:UnlockForAll("ouch_my_art")
+    end
+end
+
+function ExtraAchievs:Difficulty()
+    return tonumber(tostring(Global.game_settings.difficulty):match("%d+")) or 0
+end
+
+-- unlock for one peer: the local player directly, a client by message (only the host calls this)
+function ExtraAchievs:UnlockForPeer(peer_id, id)
+    if peer_id == managers.network:session():local_peer():id() then
+        self:Unlock(id)
+    else
+        LuaNetworking:SendToPeer(peer_id, self.UNLOCK_MSG, id)
+    end
+end
+
+-- counts a kill of the local player for KILL_COUNTERS[key], persisted over the raids
+function ExtraAchievs:AddKill(key)
+    local counter = self.KILL_COUNTERS[key]
+    if not self._progress then
+        local file = io.open(SavePath .. self.PROGRESS_FILE, "r")
+        local ok, data = false, nil
+        if file then
+            ok, data = pcall(function() return json.decode(file:read("*all")) end)
+            file:close()
+        end
+        self._progress = ok and type(data) == "table" and data or {}
+    end
+    key = counter.id
+    local count = (tonumber(self._progress[key]) or 0) + 1
+    if count > counter.target then
+        return
+    end
+    self._progress[key] = count
+    local file = io.open(SavePath .. self.PROGRESS_FILE, "w")
+    if file then
+        file:write(json.encode(self._progress))
+        file:close()
+    end
+    if count >= counter.target then
+        self:Unlock(counter.id)
     end
 end
 
@@ -111,6 +217,9 @@ end
 function ExtraAchievs:WeaponId(attack_data)
     local weapon_unit = attack_data and attack_data.weapon_unit
     local base = alive(weapon_unit) and weapon_unit:base()
+    if attack_data and attack_data.variant == "melee" and attack_data.name_id then
+        return attack_data.name_id
+    end
     local name = base and base.get_name_id and base:get_name_id()
     if not name then
         return nil
@@ -132,6 +241,41 @@ function ExtraAchievs:OnEnemyDeath(unit, attack_data)
     end
 
     local weapon = self:WeaponId(attack_data)
+    local difficulty = self:Difficulty()
+
+    -- shooter peer (nil for bots and other kills), the personal achievements go to them
+    local attacker = attack_data and attack_data.attacker_unit
+    local peer = alive(attacker) and managers.network:session():peer_by_unit(attacker)
+
+    -- enemy_at_the_gates: german sniper headshot with the mosin from a distance
+    if peer and tweak_name == self.SNIPER and weapon == "mosin" and attack_data.headshot
+        and mvector3.distance(attacker:position(), unit:position()) >= self.GATES_DISTANCE then
+        self:UnlockForPeer(peer:id(), "enemy_at_the_gates")
+    end
+
+    -- nazi_scalps_for_aldo / a_nazi_walks_into_a_bar: HARD and up
+    local counter = weapon and self.KILL_COUNTERS[weapon]
+    if peer and counter and difficulty >= 3 then
+        if peer:id() == managers.network:session():local_peer():id() then
+            self:AddKill(weapon)
+        else
+            LuaNetworking:SendToPeer(peer:id(), self.PROGRESS_MSG, weapon)
+        end
+    end
+
+    -- greed_killed_the_communist: both generals in STRONGPOINT killed with the gold bar on HARD
+    if job.job_id == "settlement" and difficulty >= 3 and self.GENERALS[tweak_name] and weapon == "gold_bar" then
+        local run = self._run
+        run.gold_general_kills = (run.gold_general_kills or 0) + 1
+        if run.gold_general_kills >= self.GENERALS_COUNT then
+            self:UnlockForAll("greed_killed_the_communist")
+        end
+    end
+
+    -- the_game_was_rigged: the officer in FULL STOP killed with the luger on HARD
+    if job.job_id == "forest_bunker" and difficulty >= 3 and self.OFFICERS[tweak_name] and weapon == "georg" then
+        self:UnlockForAll("the_game_was_rigged")
+    end
 
     -- for_the_motherland: both generals in STRONGPOINT killed with russian weapons
     if job.job_id == "settlement" and self.GENERALS[tweak_name] and weapon and self.RUSSIAN_WEAPONS[weapon] then
@@ -158,6 +302,9 @@ function ExtraAchievs:ResetRun()
         cache_units = {}, -- world_id -> greed cache units that were spawned
         intel_units = {}, -- world_id -> chosen intel document unit
         goals = {},      -- goal -> true, see GOAL_ELEMENTS
+        secured = {},    -- carry_id -> secured bags
+        loud_first_loot = false, -- the alarm was up when the first loot was secured
+        loot_secured = 0,
     }
     -- rockets are placed with the world, which may be before the mission start: keep the ones that still exist
     for key, rocket in pairs(self._rockets or {}) do
@@ -274,9 +421,16 @@ if LootManager and not ExtraAchievs._hooked_loot then
 
     Hooks:PostHook(LootManager, "sync_secure_loot", "ExtraAchievs_LootManager_post_sync_secure_loot",
         function(self, carry_id)
+            local run = ExtraAchievs._run
             if carry_id == "gold" then
-                ExtraAchievs._run.gold = ExtraAchievs._run.gold + 1
+                run.gold = run.gold + 1
             end
+            run.secured[carry_id] = (run.secured[carry_id] or 0) + 1
+            if run.loot_secured == 0 then
+                local state = managers.groupai and managers.groupai:state()
+                run.loud_first_loot = state ~= nil and not state:whisper_mode()
+            end
+            run.loot_secured = run.loot_secured + 1
         end
     )
 end

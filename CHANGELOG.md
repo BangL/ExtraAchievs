@@ -1,3 +1,7 @@
+0.6:
+- new achievements: "Ouch! My Art!" (ROGUES GALLERY on VERY HARD: loud before the first loot, all paintings), "Tiger Hunter" (all King Tigers in TIGER TRAP on VERY HARD), "Come and See" (all gold in GOLD DIGGERS on VERY HARD without killing a sniper), "Enemy at the Gates" (sniper headshot with the Mosin from 50 m), "Greed killed the Communist" (both STRONGPOINT generals with the gold bar on HARD), "The game was rigged from the start" (FULL STOP officer with the Luger on HARD), "100 Nazi scalps for Aldo" (100 kills with the M3 knife on HARD or higher), "A nazi walks into a bar" (100 kills with the BAR or the gold bar on HARD or higher), "BROT" (admire the Brot store in RHINEGOLD day 2 for 20 seconds)
+- multiplayer: all but BROT are decided by the host and synced to the clients; the personal ones (sniper headshot, kill counters) go to the shooter only
+
 0.5:
 - new achievements: the four class masteries (Assault, Recon, Insurgent, Demolitions: every skill of the class at tier 4)
 - new achievements: "HANS forget the FLAMMENWERFER" (put down by the fire pool of a flamer's incendiary grenade), "Dont be so w(h)iney" (all wine barrels in FIRESTARTER on HARD), "Sicher ist sicher!" (all red-tipped rockets in COUNTDOWN on HARD), "Dont you dare to explode" (all gold of the trucks in FOREST CONVOY on HARD), "This is Seeadler" (all gold of the train in TRAIN WRECK on VERY HARD)

@@ -113,5 +113,41 @@
 
   "pacifist_burning_man_name": "The ultimate stealth challenge",
   "pacifist_burning_man_desc": "Achieve the borderline impossible: pacifist stealth BURNING MAN",
-  "pacifist_burning_man_objective": "finish BURNING MAN without being detected by anyone, and without killing anyone"
+  "pacifist_burning_man_objective": "finish BURNING MAN without being detected by anyone, and without killing anyone",
+
+  "ouch_my_art_name": "Ouch! My Art!",
+  "ouch_my_art_desc": "finish ROGUES GALLERY on VERY HARD: go loud before securing any loot and secure all paintings",
+  "ouch_my_art_objective": "ROGUES GALLERY on VERY HARD (raid only, not as part of an operation): the alarm must be raised before the first loot is secured, and all 6 paintings must be secured. The host decides and unlocks it for every player in the lobby.",
+
+  "tiger_hunter_name": "Tiger Hunter",
+  "tiger_hunter_desc": "destroy all King Tiger tanks in TIGER TRAP on VERY HARD",
+  "tiger_hunter_objective": "TIGER TRAP on VERY HARD (raid only, not as part of an operation): destroy all King Tiger tanks. The host decides and unlocks it for every player in the lobby.",
+
+  "come_and_see_name": "Come and See",
+  "come_and_see_desc": "finish GOLD DIGGERS on VERY HARD with all gold taken, without killing a sniper",
+  "come_and_see_objective": "GOLD DIGGERS on VERY HARD (raid only, not as part of an operation): take the gold of all trains and finish the mission without killing a single sniper. The host decides and unlocks it for every player in the lobby.",
+
+  "enemy_at_the_gates_name": "Enemy at the Gates",
+  "enemy_at_the_gates_desc": "headshot a german sniper with the Mosin Nagant from at least 50 m",
+  "enemy_at_the_gates_objective": "Any raid: kill a german sniper with a headshot from your Mosin Nagant, standing at least 50 m away. Only your own shot counts, kills by bots and teammates do not. The host decides and unlocks it for you.",
+
+  "greed_killed_the_communist_name": "Greed killed the Communist",
+  "greed_killed_the_communist_desc": "kill both Soviet generals in STRONGPOINT with the gold bar on HARD",
+  "greed_killed_the_communist_objective": "STRONGPOINT on HARD or higher (raid only, not as part of an operation): kill both Soviet generals with the Gold Bar grenade. Kills by anyone count, as long as both were made with the gold bar. The host decides and unlocks it for every player in the lobby.",
+
+  "nazi_scalps_for_aldo_name": "100 Nazi scalps for Aldo",
+  "nazi_scalps_for_aldo_desc": "kill 100 enemies with the M3 trench knife in raids on HARD or higher",
+  "nazi_scalps_for_aldo_objective": "Kill 100 enemies with the M3 trench knife, counted over all raids (not operations) on HARD or higher. Only your own kills count. The host decides which kills count, so it works only if the host has this mod too.",
+
+  "the_game_was_rigged_name": "The game was rigged from the start",
+  "the_game_was_rigged_desc": "kill the officer in FULL STOP with the Parabellum P08 (Luger) on HARD",
+  "the_game_was_rigged_objective": "FULL STOP on HARD or higher (raid only, not as part of an operation): kill the officer with the Parabellum P08 (Luger). The final blow counts, so a teammate or bot with a Luger also works. The host decides and unlocks it for every player in the lobby.",
+
+  "a_nazi_walks_into_a_bar_name": "A nazi walks into a bar",
+  "a_nazi_walks_into_a_bar_desc": "kill 100 enemies with the BAR or the gold bar in raids on HARD or higher",
+  "a_nazi_walks_into_a_bar_objective": "Kill 100 enemies with the BAR (Browning) or the Gold Bar grenade, counted together over all raids (not operations) on HARD or higher. Only your own kills count. The host decides which kills count, so it works only if the host has this mod too.",
+
+  "brot_name": "BROT",
+  "brot_desc": "stand in front of the legendary Brot store and admire it for 20 seconds",
+  "brot_objective": "Stand in front of the legendary Brot store in the town of RHINEGOLD (day 2, both variants) and admire it for 20 seconds (look at it: compass heading around 30). Everyone earns this one for themselves."
 }
