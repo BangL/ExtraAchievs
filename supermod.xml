@@ -11,6 +11,6 @@
     </updates>
     <dependencies>
         <dependency name="BeardLib"
-                    download_url="https://api.modworkshop.net/files/49760/download" />
+                    download_url="https://api.modworkshop.net/mods/49760/download" />
     </dependencies>
 </mod>
