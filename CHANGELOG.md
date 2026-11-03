@@ -1,3 +1,6 @@
+0.6.4:
+- fix: "Dont be so w(h)iney" counts the destroyed wine barrels itself (all 20) instead of following the objective, which asks for fewer on HARD and kept its counter over a mission restart
+
 0.6.3:
 - fix: BROT now works in free play
 

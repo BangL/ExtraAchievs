@@ -43,7 +43,10 @@ ExtraAchievs.GOAL_ELEMENTS = {
     [100878] = { job = "tnd", goal = "tanks" },                -- tanks_destroyed_counter: all king tigers destroyed
     [102159] = { job = "fury_railway", goal = "train_loot" },  -- trains_emptied_of_gold: the gold of all trains taken
 }
-ExtraAchievs.WHINEY_OBJECTIVE = "obj_ger_castle_op_02" -- Firestarter: shoot the wine barrels (sub objective counts them)
+-- Firestarter: logic_link_barrel_destroyed (103365) runs once per destroyed wine barrel (by anyone or by the fire),
+-- logic_random_015 always spawns 20 of them. The objective itself wants fewer on HARD, so we count on our own.
+ExtraAchievs.WHINEY_ELEMENT = 103365
+ExtraAchievs.WHINEY_BARRELS = 20
 ExtraAchievs.FLAMER_FIRE = "flamer_incendiary" -- fire tweak id of the pool the incendiary grenade of the flamer leaves
 
 -- brot: stand in front of the Brot store (operation mission id -> spot, cm) for BROT_TIME seconds
@@ -119,6 +122,16 @@ end
 
 -- host: a goal element of the mission script was executed (called from MissionScriptElement:on_executed)
 function ExtraAchievs:OnElementExecuted(element)
+    if element._id == self.WHINEY_ELEMENT and Network:is_server() and element._values.enabled then
+        local diff = tonumber(tostring(Global.game_settings.difficulty):match("%d+")) or 0
+        local job = managers.raid_job and managers.raid_job:current_job()
+        if diff >= 3 and job and (job.job_id == "oper_flamable_castle" or job.job_id == "oper_flamable") then -- HARD and up, element ids are not unique over the levels
+            self._run.barrels = self._run.barrels + 1
+            if self._run.barrels == self.WHINEY_BARRELS then
+                self:UnlockForAll("dont_be_so_whiney")
+            end
+        end
+    end
     local goal = self.GOAL_ELEMENTS[element._id]
     if goal and Network:is_server() and element._values.enabled then
         local job = managers.raid_job and managers.raid_job:current_job()
@@ -307,6 +320,7 @@ function ExtraAchievs:ResetRun()
         secured = {},    -- carry_id -> secured bags
         loud_first_loot = false, -- the alarm was up when the first loot was secured
         loot_secured = 0,
+        barrels = 0,     -- destroyed wine barrels of FIRESTARTER, see WHINEY_ELEMENT
     }
     -- rockets are placed with the world, which may be before the mission start: keep the ones that still exist
     for key, rocket in pairs(self._rockets or {}) do
@@ -491,25 +505,4 @@ if GamePlayCentralManager and not ExtraAchievs._hooked_gameplaycentral then
             rocket.disabled = nil
         end
     end)
-end
-
-if ObjectivesManager and not ExtraAchievs._hooked_objectives then
-    ExtraAchievs._hooked_objectives = true
-
-    -- dont_be_so_whiney: Firestarter counts the destroyed wine barrels as sub objective, which is finished with the last one
-    Hooks:PostHook(ObjectivesManager, "complete_sub_objective", "ExtraAchievs_ObjectivesManager_post_complete_sub_objective",
-        function(self, id, sub_id, load_data)
-            if id ~= ExtraAchievs.WHINEY_OBJECTIVE or load_data or not Network:is_server() then
-                return
-            end
-            if (tonumber(tostring(Global.game_settings.difficulty):match("%d+")) or 0) < 3 then -- HARD and up
-                return
-            end
-            local objective = self._objectives[id]
-            local sub_objective = objective and objective.sub_objectives[sub_id]
-            if sub_objective and sub_objective.completed then
-                ExtraAchievs:UnlockForAll("dont_be_so_whiney")
-            end
-        end
-    )
 end
