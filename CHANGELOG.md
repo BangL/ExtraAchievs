@@ -1,3 +1,8 @@
+0.6.5:
+- new: "Sniper Duel" (pistol headshot on a german sniper from 30 m), "Close Quarters Sniping" (shotgun headshot on a german sniper), "Not From Here" (melee kill on a flamethrower trooper), "Flying Change" (3 weapon classes within 5 s)
+- fix: the pacifist BURNING MAN achievement was never checked: missions without dog tags never reach the vanilla achievement check; the end-of-mission checks now run as soon as the stats are ready (only the loot check waits for the loot data)
+- the end-of-mission checks are a registry now (ExtraAchievs:AddEndCheck), new achievements say whether they need the loot data
+
 0.6.4:
 - fix: "Dont be so w(h)iney" counts the destroyed wine barrels itself (all 20) instead of following the objective, which asks for fewer on HARD and kept its counter over a mission restart
 

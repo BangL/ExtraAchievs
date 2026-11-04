@@ -13,8 +13,9 @@ ExtraAchievs.PROGRESS_FILE = "ExtraAchievs.json" -- in SavePath, counters of the
 -- achievements the host decides and tells the clients (they can't see the weapons of other peers' kills)
 ExtraAchievs.HOST_ACHIEVEMENTS = { for_the_motherland = true, deutschland_den_deutschen = true, protect_lange = true,
     dont_be_so_whiney = true, sicher_ist_sicher = true, dont_you_dare_to_explode = true, this_is_seeadler = true,
-    ouch_my_art = true, tiger_hunter = true, come_and_see = true, enemy_at_the_gates = true,
-    greed_killed_the_communist = true, the_game_was_rigged = true, nazi_scalps_for_aldo = true, a_nazi_walks_into_a_bar = true }
+    ouch_my_art = true, tiger_hunter = true, come_and_see = true, enemy_at_the_gates = true, shotgun_sniper = true,
+    sniper_duel = true, not_from_here = true, flying_change = true, greed_killed_the_communist = true,
+    the_game_was_rigged = true, nazi_scalps_for_aldo = true, a_nazi_walks_into_a_bar = true }
 
 -- weapon ids (npc variants have a suffix, see WeaponId)
 ExtraAchievs.RUSSIAN_WEAPONS = { tt33 = true, mosin = true, dp28 = true }
@@ -26,6 +27,11 @@ ExtraAchievs.GENERALS = { soviet_nkvd_int_security_captain = true, soviet_nkvd_i
 ExtraAchievs.GENERALS_COUNT = 2 -- STRONGPOINT
 ExtraAchievs.OFFICERS = { fb_german_commander = true, fb_german_commander_boss = true } -- FULL STOP
 ExtraAchievs.SNIPER = "german_sniper"
+ExtraAchievs.DUEL_DISTANCE = 3000 -- cm, headshot with a pistol
+ExtraAchievs.SWITCH_KILLS = 3 -- kills with this many different weapon classes ...
+ExtraAchievs.SWITCH_TIME = 5 -- ... within this many seconds
+ExtraAchievs.FLAMER = "german_flamer"
+ExtraAchievs.SHOTGUNS = { m1912 = true, ithaca = true, browning = true, shotty = true, geco = true } -- player shotguns (WeaponId)
 ExtraAchievs.GATES_DISTANCE = 5000 -- cm, headshot with the mosin
 ExtraAchievs.PAINTINGS = { carry_id = "painting_sto", count = 6 } -- ROGUES GALLERY, count = target of the paintings counter
 
@@ -266,6 +272,46 @@ function ExtraAchievs:OnEnemyDeath(unit, attack_data)
     if peer and tweak_name == self.SNIPER and weapon == "mosin" and attack_data.headshot
         and mvector3.distance(attacker:position(), unit:position()) >= self.GATES_DISTANCE then
         self:UnlockForPeer(peer:id(), "enemy_at_the_gates")
+    end
+
+    -- shotgun_sniper: german sniper headshot with any shotgun
+    if peer and tweak_name == self.SNIPER and weapon and self.SHOTGUNS[weapon] and attack_data.headshot then
+        self:UnlockForPeer(peer:id(), "shotgun_sniper")
+    end
+
+    -- sniper_duel: german sniper headshot with a pistol from a distance
+    local weapon_tweak = weapon and tweak_data.weapon[weapon]
+    if peer and tweak_name == self.SNIPER and weapon_tweak and weapon_tweak.category == WeaponTweakData.WEAPON_CATEGORY_PISTOL
+        and attack_data.headshot and mvector3.distance(attacker:position(), unit:position()) >= self.DUEL_DISTANCE then
+        self:UnlockForPeer(peer:id(), "sniper_duel")
+    end
+
+    -- not_from_here: flamethrower trooper killed with a melee weapon
+    if peer and tweak_name == self.FLAMER and attack_data.variant == "melee" then
+        self:UnlockForPeer(peer:id(), "not_from_here")
+    end
+
+    -- flying_change: kills with SWITCH_KILLS different weapon classes within SWITCH_TIME seconds (melee is a class of its own)
+    local class = attack_data and attack_data.variant == "melee" and "melee" or weapon_tweak and weapon_tweak.category
+    if peer and class then
+        local now = TimerManager:game():time()
+        local recent = self._run.recent_kills or {}
+        self._run.recent_kills = recent
+        local list = recent[peer:id()] or {}
+        recent[peer:id()] = list
+        table.insert(list, { time = now, class = class })
+        local classes, count = {}, 0
+        for i = #list, 1, -1 do
+            if now - list[i].time > self.SWITCH_TIME then
+                table.remove(list, i)
+            elseif not classes[list[i].class] then
+                classes[list[i].class] = true
+                count = count + 1
+            end
+        end
+        if count >= self.SWITCH_KILLS then
+            self:UnlockForPeer(peer:id(), "flying_change")
+        end
     end
 
     -- nazi_scalps_for_aldo / a_nazi_walks_into_a_bar: HARD and up

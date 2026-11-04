@@ -131,6 +131,22 @@
   "enemy_at_the_gates_desc": "headshot a german sniper with the Mosin Nagant from at least 50 m",
   "enemy_at_the_gates_objective": "Any raid: kill a german sniper with a headshot from your Mosin Nagant, standing at least 50 m away. Only your own shot counts, kills by bots and teammates do not. The host decides and unlocks it for you.",
 
+  "shotgun_sniper_name": "Close Quarters Sniping",
+  "shotgun_sniper_desc": "headshot a german sniper with a shotgun",
+  "shotgun_sniper_objective": "Any raid: kill a german sniper with a headshot from a shotgun. Only your own shot counts, kills by bots and teammates do not. The host decides and unlocks it for you.",
+
+  "sniper_duel_name": "Sniper Duel",
+  "sniper_duel_desc": "headshot a german sniper with a pistol from at least 30 m",
+  "sniper_duel_objective": "Any raid: kill a german sniper with a headshot from a pistol, standing at least 30 m away. Only your own shot counts, kills by bots and teammates do not. The host decides and unlocks it for you.",
+
+  "not_from_here_name": "Not From Here",
+  "not_from_here_desc": "kill a flamethrower trooper with a melee weapon",
+  "not_from_here_objective": "Any raid: kill a flamethrower trooper with a melee weapon. Only your own kill counts. The host decides and unlocks it for you.",
+
+  "flying_change_name": "Flying Change",
+  "flying_change_desc": "kill 3 enemies with 3 different weapon classes within 5 seconds",
+  "flying_change_objective": "Any raid: kill enemies with three different weapon classes (e.g. rifle, pistol, melee) within 5 seconds. Only your own kills count. The host decides and unlocks it for you.",
+
   "greed_killed_the_communist_name": "Greed killed the Communist",
   "greed_killed_the_communist_desc": "kill both Soviet generals in STRONGPOINT with the gold bar on HARD",
   "greed_killed_the_communist_objective": "STRONGPOINT on HARD or higher (raid only, not as part of an operation): kill both Soviet generals with the Gold Bar grenade. Kills by anyone count, as long as both were made with the gold bar. The host decides and unlocks it for every player in the lobby.",
