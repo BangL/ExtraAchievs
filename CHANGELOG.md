@@ -1,3 +1,6 @@
+0.6.8:
+- fix: "Tiger Hunter" never triggered: the mission counter only counts the explosive kill of the first tiger, the AA shell kills of the others never reach it; all 4 tigers are counted over their "tank destroyed" outputs now
+
 0.6.7:
 - debug: the goal checks (Seeadler, Come and See, Tiger Hunter, Dont you dare to explode, Sicher ist sicher) log when a goal element fires and what the end of mission check sees ("[ExtraAchievs] goal element ..." / "[ExtraAchievs] CheckGoals ...")
 

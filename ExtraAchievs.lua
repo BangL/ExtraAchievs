@@ -46,9 +46,12 @@ ExtraAchievs.KILL_COUNTERS.gold_bar = ExtraAchievs.KILL_COUNTERS.m1918 -- the go
 ExtraAchievs.GOAL_ELEMENTS = {
     [101403] = { job = "forest_gumpy", goal = "gold_trucks" }, -- ex_lootcounter_eq0: all gold of the trucks secured
     [100763] = { job = "ger_bridge", goal = "train_gold" },    -- logic_link_all_gold_in: all gold of the train secured
-    [100878] = { job = "tnd", goal = "tanks" },                -- tanks_destroyed_counter: all king tigers destroyed
     [102159] = { job = "fury_railway", goal = "train_loot" },  -- trains_emptied_of_gold: the gold of all trains taken
 }
+-- Tiger Trap: the game's own counter (100878) only counts the IED kill of the first tiger; the AA shell kills of the others
+-- only fire "tank destroyed" (100419-100422). So count the distinct tigers over both outputs; 4 always spawn, the mission itself wants fewer.
+ExtraAchievs.TANK_ELEMENTS = { [100419] = 1, [101019] = 1, [100420] = 2, [101015] = 2, [100421] = 3, [101017] = 3, [100422] = 4, [101018] = 4 }
+ExtraAchievs.TANKS_NEEDED = 4
 -- Firestarter: logic_link_barrel_destroyed (103365) runs once per destroyed wine barrel (by anyone or by the fire),
 -- logic_random_015 always spawns 20 of them. The objective itself wants fewer on HARD, so we count on our own.
 ExtraAchievs.WHINEY_ELEMENT = 103365
@@ -135,6 +138,20 @@ function ExtraAchievs:OnElementExecuted(element)
             self._run.barrels = self._run.barrels + 1
             if self._run.barrels == self.WHINEY_BARRELS then
                 self:UnlockForAll("dont_be_so_whiney")
+            end
+        end
+    end
+    local tank = self.TANK_ELEMENTS[element._id]
+    if tank and Network:is_server() then
+        local job = managers.raid_job and managers.raid_job:current_job()
+        if job and job.job_id == "tnd" then
+            self._run.tanks = self._run.tanks or {}
+            self._run.tanks[tank] = true
+            local n = 0
+            for _ in pairs(self._run.tanks) do n = n + 1 end
+            log("[ExtraAchievs] tiger " .. tank .. " destroyed via " .. tostring(element._id) .. ", " .. n .. " so far")
+            if n >= self.TANKS_NEEDED then
+                self._run.goals.tanks = true
             end
         end
     end
