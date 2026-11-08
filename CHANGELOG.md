@@ -1,3 +1,6 @@
+0.6.7:
+- debug: the goal checks (Seeadler, Come and See, Tiger Hunter, Dont you dare to explode, Sicher ist sicher) log when a goal element fires and what the end of mission check sees ("[ExtraAchievs] goal element ..." / "[ExtraAchievs] CheckGoals ...")
+
 0.6.6:
 - fix: headshot based achievements (Sniper Duel, Close Quarters Sniping, Enemy at the Gates) never triggered: the headshot flag is only set after the death was reported, the hit body is checked now
 - fix: "A nazi walks into a bar" counted the Browning Auto-5 shotgun instead of the BAR (M1918)

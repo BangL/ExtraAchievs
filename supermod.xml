@@ -2,7 +2,7 @@
 <mod name="Extra Achievements" image="icon.png"
      description="Adds extra achievements to the game."
      author="BangL, shinrax2"
-     version="0.6.6"
+     version="0.6.7"
      color="Color(0.24,0.24,0.24)">
     <updates>
         <update identifier="extraachievs">

@@ -139,6 +139,11 @@ function ExtraAchievs:OnElementExecuted(element)
         end
     end
     local goal = self.GOAL_ELEMENTS[element._id]
+    if goal then
+        local job = managers.raid_job and managers.raid_job:current_job()
+        log("[ExtraAchievs] goal element " .. tostring(element._id) .. " (" .. goal.goal .. ") executed, job=" .. tostring(job and job.job_id)
+            .. " server=" .. tostring(Network:is_server()) .. " enabled=" .. tostring(element._values.enabled))
+    end
     if goal and Network:is_server() and element._values.enabled then
         local job = managers.raid_job and managers.raid_job:current_job()
         if job and job.job_id == goal.job then
@@ -168,6 +173,12 @@ end
 -- host: checks of the raid goals, called once the mission is complete (difficulty is the number of difficulty_N)
 function ExtraAchievs:CheckGoals(job_id, difficulty)
     local goals = self._run.goals
+    local names = {}
+    for name in pairs(goals) do
+        table.insert(names, name)
+    end
+    log("[ExtraAchievs] CheckGoals job=" .. tostring(job_id) .. " difficulty=" .. tostring(difficulty) .. " goals={" .. table.concat(names, ",")
+        .. "} rockets=" .. tostring(self:AllRocketsDestroyed()))
     if job_id == "silo" and difficulty >= 3 and self:AllRocketsDestroyed() then
         self:UnlockForAll("sicher_ist_sicher")
     elseif job_id == "forest_gumpy" and difficulty >= 3 and goals.gold_trucks then
