@@ -1,3 +1,9 @@
+0.6.6:
+- fix: headshot based achievements (Sniper Duel, Close Quarters Sniping, Enemy at the Gates) never triggered: the headshot flag is only set after the death was reported, the hit body is checked now
+- fix: "A nazi walks into a bar" counted the Browning Auto-5 shotgun instead of the BAR (M1918)
+- fix: kills with grenades (gold bar) were never attributed to the thrower
+- the kill based achievements also work in operations (RHINEGOLD)
+
 0.6.5:
 - new: "Sniper Duel" (pistol headshot on a german sniper from 30 m), "Close Quarters Sniping" (shotgun headshot on a german sniper), "Not From Here" (melee kill on a flamethrower trooper), "Flying Change" (3 weapon classes within 5 s)
 - fix: the pacifist BURNING MAN achievement was never checked: missions without dog tags never reach the vanilla achievement check; the end-of-mission checks now run as soon as the stats are ready (only the loot check waits for the loot data)

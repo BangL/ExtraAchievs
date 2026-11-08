@@ -39,8 +39,8 @@ ExtraAchievs.PAINTINGS = { carry_id = "painting_sto", count = 6 } -- ROGUES GALL
 ExtraAchievs.KILL_COUNTERS = {
     m3_knife = { id = "nazi_scalps_for_aldo", target = 100 },
 }
-ExtraAchievs.KILL_COUNTERS.browning = { id = "a_nazi_walks_into_a_bar", target = 100 } -- BAR
-ExtraAchievs.KILL_COUNTERS.gold_bar = ExtraAchievs.KILL_COUNTERS.browning -- the gold bar grenade counts too
+ExtraAchievs.KILL_COUNTERS.m1918 = { id = "a_nazi_walks_into_a_bar", target = 100 } -- BAR (browning is the Auto-5 shotgun)
+ExtraAchievs.KILL_COUNTERS.gold_bar = ExtraAchievs.KILL_COUNTERS.m1918 -- the gold bar grenade counts too
 
 -- mission elements that say "the goal is reached" (id -> job and goal), judged by the host when the mission is complete
 ExtraAchievs.GOAL_ELEMENTS = {
@@ -235,6 +235,29 @@ function ExtraAchievs:UnlockForAll(id)
     end
 end
 
+-- attacker and weapon id of a kill; grenades are the attacker themselves (thrower_unit), their weapon id is in the projectile tweak
+function ExtraAchievs:Attacker(attack_data)
+    local attacker = attack_data and attack_data.attacker_unit
+    local base = alive(attacker) and attacker:base()
+    if base and base.thrower_unit then
+        local entry = base.projectile_entry and base:projectile_entry()
+        local projectile = entry and tweak_data.projectiles[entry]
+        return base:thrower_unit(), projectile and projectile.weapon_id
+    end
+    return attacker, nil
+end
+
+-- attack_data.headshot is only set after die() ran, so look at the body hit
+function ExtraAchievs:IsHeadshot(unit, attack_data)
+    if attack_data.headshot ~= nil then
+        return attack_data.headshot and true or false
+    end
+    local damage = alive(unit) and unit:character_damage()
+    local body = attack_data.col_ray and attack_data.col_ray.body
+    return damage ~= nil and damage._ids_head_body_name ~= nil and body ~= nil and alive(body)
+        and body:name() == damage._ids_head_body_name or false
+end
+
 function ExtraAchievs:WeaponId(attack_data)
     local weapon_unit = attack_data and attack_data.weapon_unit
     local base = alive(weapon_unit) and weapon_unit:base()
@@ -251,7 +274,7 @@ end
 -- host: an enemy died (called from CopDamage:die). Kills by anyone count, the weapon decides.
 function ExtraAchievs:OnEnemyDeath(unit, attack_data)
     local job = managers.raid_job and managers.raid_job:current_job()
-    if not job or job.job_type == OperationsTweakData.JOB_TYPE_OPERATION then
+    if not job then
         return
     end
 
@@ -261,28 +284,29 @@ function ExtraAchievs:OnEnemyDeath(unit, attack_data)
         return
     end
 
-    local weapon = self:WeaponId(attack_data)
+    local attacker, grenade_weapon = self:Attacker(attack_data)
+    local weapon = grenade_weapon or self:WeaponId(attack_data)
     local difficulty = self:Difficulty()
+    local headshot = attack_data and self:IsHeadshot(unit, attack_data)
 
     -- shooter peer (nil for bots and other kills), the personal achievements go to them
-    local attacker = attack_data and attack_data.attacker_unit
     local peer = alive(attacker) and managers.network:session():peer_by_unit(attacker)
 
     -- enemy_at_the_gates: german sniper headshot with the mosin from a distance
-    if peer and tweak_name == self.SNIPER and weapon == "mosin" and attack_data.headshot
+    if peer and tweak_name == self.SNIPER and weapon == "mosin" and headshot
         and mvector3.distance(attacker:position(), unit:position()) >= self.GATES_DISTANCE then
         self:UnlockForPeer(peer:id(), "enemy_at_the_gates")
     end
 
     -- shotgun_sniper: german sniper headshot with any shotgun
-    if peer and tweak_name == self.SNIPER and weapon and self.SHOTGUNS[weapon] and attack_data.headshot then
+    if peer and tweak_name == self.SNIPER and weapon and self.SHOTGUNS[weapon] and headshot then
         self:UnlockForPeer(peer:id(), "shotgun_sniper")
     end
 
     -- sniper_duel: german sniper headshot with a pistol from a distance
     local weapon_tweak = weapon and tweak_data.weapon[weapon]
     if peer and tweak_name == self.SNIPER and weapon_tweak and weapon_tweak.category == WeaponTweakData.WEAPON_CATEGORY_PISTOL
-        and attack_data.headshot and mvector3.distance(attacker:position(), unit:position()) >= self.DUEL_DISTANCE then
+        and headshot and mvector3.distance(attacker:position(), unit:position()) >= self.DUEL_DISTANCE then
         self:UnlockForPeer(peer:id(), "sniper_duel")
     end
 
