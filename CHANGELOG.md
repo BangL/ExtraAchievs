@@ -1,3 +1,6 @@
+0.6.9:
+- debug: more logging for the goal achievements (Tiger Hunter, Seeadler, ...): the mission start lists whether the goal elements exist, the tiger outputs, the rocket count and every unlock are logged
+
 0.6.8:
 - fix: "Tiger Hunter" never triggered: the mission counter only counts the explosive kill of the first tiger, the AA shell kills of the others never reach it; all 4 tigers are counted over their "tank destroyed" outputs now
 

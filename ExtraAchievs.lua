@@ -142,6 +142,10 @@ function ExtraAchievs:OnElementExecuted(element)
         end
     end
     local tank = self.TANK_ELEMENTS[element._id]
+    if tank then
+        local job = managers.raid_job and managers.raid_job:current_job()
+        log("[ExtraAchievs] tank element " .. tostring(element._id) .. " executed, job=" .. tostring(job and job.job_id) .. " server=" .. tostring(Network:is_server()))
+    end
     if tank and Network:is_server() then
         local job = managers.raid_job and managers.raid_job:current_job()
         if job and job.job_id == "tnd" then
@@ -176,7 +180,13 @@ end
 
 -- true if every red-tipped rocket that was placed (and not taken away by the mission script) went off
 function ExtraAchievs:AllRocketsDestroyed()
-    local exploded = 0
+    local exploded, total, off = 0, 0, 0
+    for _, rocket in pairs(self._rockets) do
+        total = total + 1
+        if rocket.exploded then exploded = exploded + 1 elseif rocket.disabled then off = off + 1 end
+    end
+    log("[ExtraAchievs] rockets tracked=" .. total .. " exploded=" .. exploded .. " disabled=" .. off)
+    exploded = 0
     for _, rocket in pairs(self._rockets) do
         if rocket.exploded then
             exploded = exploded + 1
@@ -257,6 +267,7 @@ end
 
 -- unlock for the local player and, as host, tell the clients
 function ExtraAchievs:UnlockForAll(id)
+    log("[ExtraAchievs] UnlockForAll " .. tostring(id))
     self:Unlock(id)
     if LuaNetworking:IsMultiplayer() then
         LuaNetworking:SendToPeers(self.UNLOCK_MSG, id)
@@ -402,6 +413,25 @@ function ExtraAchievs:OnEnemyDeath(unit, attack_data)
     -- deutschland_den_deutschen: the officer in FULL STOP killed with a german weapon
     if job.job_id == "forest_bunker" and self.OFFICERS[tweak_name] and weapon and self.GERMAN_WEAPONS[weapon] then
         self:UnlockForAll("deutschland_den_deutschen")
+    end
+end
+
+-- debug: do the elements we wait for exist in the running mission, and what are they
+function ExtraAchievs:ProbeElements()
+    local job = managers.raid_job and managers.raid_job:current_job()
+    log("[ExtraAchievs] mission start job=" .. tostring(job and job.job_id) .. " server=" .. tostring(Network:is_server())
+        .. " difficulty=" .. tostring(Global.game_settings and Global.game_settings.difficulty))
+    local ids = {}
+    for id in pairs(self.GOAL_ELEMENTS) do ids[#ids + 1] = id end
+    for id in pairs(self.TANK_ELEMENTS) do ids[#ids + 1] = id end
+    table.sort(ids)
+    for _, id in ipairs(ids) do
+        local ok, element = blt.pcall(function() return managers.mission:get_element_by_id(id) end)
+        if ok and element then
+            log("[ExtraAchievs]   element " .. id .. " = " .. tostring(element._editor_name) .. " enabled=" .. tostring(element._values.enabled))
+        else
+            log("[ExtraAchievs]   element " .. id .. " not found")
+        end
     end
 end
 
@@ -562,6 +592,7 @@ if RaidJobManager and not ExtraAchievs._hooked_job then
         function()
             ExtraAchievs:ResetRun()
             ExtraAchievs._run.started = managers.network:session() -- the lobby it was seen in
+            ExtraAchievs:ProbeElements()
             if Network:is_server() and LuaNetworking:IsMultiplayer() and ExtraAchievs:HasPickpocket() then
                 LuaNetworking:SendToPeers(ExtraAchievs.HELLO_MSG, "1")
             end
